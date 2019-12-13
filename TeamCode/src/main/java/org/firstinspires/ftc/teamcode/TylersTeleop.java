@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Tyler's Teleop", group="Iterative Opmode")
-// @Disabled
+@Disabled
 public class TylersTeleop extends OpMode
 {
     // Declare OpMode members.

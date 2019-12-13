@@ -72,10 +72,6 @@ public class ParkAuto extends LinearOpMode {
     private DcMotor leftRearDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightRearDrive = null;
-    private Servo servoBlock = null;
-    private Servo servoFoundation1 = null;
-    private Servo servoFoundation2 = null;
-    private Servo servoCapstone = null;
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: ANDYMARK Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
@@ -88,10 +84,6 @@ public class ParkAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        servoBlock.setPosition(-1.0);
-        servoFoundation1.setPosition(-1.0);
-        servoFoundation2.setPosition(1.0);
-        servoCapstone.setPosition(-1.0);
 
         /*
          * Initialize the drive system variables.

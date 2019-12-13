@@ -72,10 +72,6 @@ public class ParkAutoRight extends LinearOpMode {
     private DcMotor leftRearDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightRearDrive = null;
-    private Servo servoBlock = null;
-    private Servo servoFoundation1 = null;
-    private Servo servoFoundation2 = null;
-    private Servo servoCapstone = null;
 
     static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: ANDYMARK Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
@@ -87,10 +83,6 @@ public class ParkAutoRight extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        servoBlock.setPosition(-1.0);
-        servoFoundation1.setPosition(-1.0);
-        servoFoundation2.setPosition(1.0);
-        servoCapstone.setPosition(-1.0);
 
         /*
          * Initialize the drive system variables.
@@ -231,10 +223,10 @@ public class ParkAutoRight extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - (int)(inches * COUNTS_PER_INCH);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
-            newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
-            newRightRearTarget = rightRearDrive.getCurrentPosition() - (int)(inches * COUNTS_PER_INCH);
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int)(inches * COUNTS_PER_INCH);
+            newLeftRearTarget = leftRearDrive.getCurrentPosition() - (int)(inches * COUNTS_PER_INCH);
+            newRightRearTarget = rightRearDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
 
             leftFrontDrive.setTargetPosition(newLeftFrontTarget);
             rightFrontDrive.setTargetPosition(newRightFrontTarget);

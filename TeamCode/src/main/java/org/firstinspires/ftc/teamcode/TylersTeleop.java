@@ -53,7 +53,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Tyler's Teleop", group="Iterative Opmode")
-@Disabled
+// @Disabled
 public class TylersTeleop extends OpMode
 {
     // Declare OpMode members.
@@ -70,8 +70,15 @@ public class TylersTeleop extends OpMode
     private double loopsPerSecond = 0.0;
     private double loops = 0.0;
 
-    private boolean[] buttonState = new boolean[3];
-    private boolean[] buttonIsActive = new boolean[3];
+    private int iterations0 = 1;
+    private int iterations1 = 1;
+    private int iterations2 = 1;
+    private boolean active0 = false;
+    private boolean active1 = false;
+    private boolean active2 = false;
+
+    private boolean button_rb_IsActive = false;
+    private boolean slowmode = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -139,82 +146,79 @@ public class TylersTeleop extends OpMode
         double left_x = gamepad1.left_stick_x;
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
+        boolean button_rb = gamepad1.right_bumper;
 
         boolean button_y = gamepad2.y;
         boolean button_b = gamepad2.b;
         boolean button_dpad_down = gamepad2.dpad_down;
 
         // button Y on controller 2 controls the block grabber attachment servo
-        if (button_y && !buttonIsActive[0]){
-            buttonIsActive[0] = true;
-            if (buttonState[0]) {
+        if(button_y && !active0) {
+            active0 = true;
+            if (iterations0 % 2 == 0) {
                 servoBlock.setPosition(-1.0);
-            }
-            else {
+                iterations0++;
+            } else {
                 servoBlock.setPosition(1.0);
+                iterations0++;
             }
-
-            buttonState[0] = !buttonState[0];
         }
         else if (!button_y) {
-            buttonIsActive[0] = false;
+            active0 = false;
         }
 
         // button B on controller 2 controls the foundation grabber servos
-        if (button_b && !buttonIsActive[1]){
-            buttonIsActive[1] = true;
-            if (buttonState[1]) {
+        if(button_b && !active1) {
+            active1 = true;
+            if (iterations1 % 2 == 0) {
                 servoFoundation1.setPosition(-1.0);
-                servoFoundation2.setPosition( 1.0);
-            }
-            else {
+                servoFoundation2.setPosition(1.0);
+                iterations1++;
+            } else {
                 servoFoundation1.setPosition(1.0);
                 servoFoundation2.setPosition(-1.0);
+                iterations1++;
             }
 
-            buttonState[1] = !buttonState[1];
         }
         else if (!button_b) {
-            buttonIsActive[1] = false;
+            active1 = false;
         }
 
         // dpad down button on controller 2 controls dropping the capstone
-        if (button_dpad_down && !buttonIsActive[2]){
-            buttonIsActive[2] = true;
-            if (buttonState[2]) {
+        if(button_dpad_down && !active2) {
+            active2 = true;
+            if (iterations2 % 2 == 0) {
                 servoCapstone.setPosition(1.0);
-            }
-            else {
+                iterations2++;
+            } else {
                 servoCapstone.setPosition(-1.0);
+                iterations2++;
             }
 
-            buttonState[2] = !buttonState[2];
         }
         else if (!button_dpad_down) {
-            buttonIsActive[2] = false;
+            active2 = false;
         }
 
-        if ((left_y > -0.75) && (left_y < 0.75)) {
-            left_y = left_y / 2.0;
+        if (button_rb && !button_rb_IsActive){
+            button_rb_IsActive = true;
+            slowmode = !slowmode;
+        }
+        else if (!button_rb) {
+            button_rb_IsActive = false;
         }
 
-        if ((left_x > -0.75) && (left_x < 0.75)) {
-            left_x = left_x / 2.0;
-        }
-
-        if ((right_x > -0.75) && (right_x < 0.75)) {
-            right_x = right_x / 2.0;
+        if (slowmode){
+            left_y = left_y / 3;
+            left_x = left_x / 3;
+            right_x = right_x / 3;
         }
 
         leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
         rightFrontPower  = Range.clip(left_y - right_x - left_x, -1.0, 1.0) ;
         leftRearPower    = Range.clip(left_y + right_x - left_x, -1.0, 1.0) ;
         rightRearPower   = Range.clip(left_y - right_x + left_x, -1.0, 1.0) ;
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
 
         // Send calculated power to wheels
         leftFrontDrive.setPower(leftFrontPower);

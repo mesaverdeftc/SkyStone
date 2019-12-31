@@ -167,39 +167,6 @@ public class HudsonsTeleop extends OpMode
 
         amount += 1;
 
-
-
-            /*if(button_Y) {
-                servoBlock.setPosition(1.0);
-            }
-            if(button_A) {
-                servoBlock.setPosition(-1.0);
-            }*/
-
-            /*if(button_B) {
-                servoFoundation1.setPosition(-1.0);
-                servoFoundation2.setPosition(1.0);
-            }
-
-            if(button_X) {
-                servoFoundation1.setPosition(1.0);
-                servoFoundation2.setPosition(-1.0);
-            }
-            */
-              /*if(button_B) {
-                servoFoundation1.setPosition(-1.0);
-                servoFoundation2.setPosition(-1.0);
-            } else {
-                servoFoundation1.setPosition(1.0);
-                servoFoundation2.setPosition(1.0);
-            }*/
-
-            /*if (button_dpad_up) {
-                servoCapstone.setPosition(1.0);
-            }
-            if(button_dpad_down) {
-                servoCapstone.setPosition(-1.0);
-            }*/
         if(button_Y && !active0) {
             active0 = true;
             if (iterations0 % 2 == 0) {
@@ -248,30 +215,11 @@ public class HudsonsTeleop extends OpMode
             active2 = false;
         }
 
-
-        /*if(button_A && !active2) {
-            active2 = true;
-            if (iterations2 % 2 == 0) {
-                servoCapstone.setPosition(1.0);
-                iterations2++;
-            } else {
-                servoCapstone.setPosition(-1.0);
-                iterations2++;
-            }
-
-        }
-        else if (!button_A) {
-            active2 = false;
-        }*/
-
-
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
 
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
-        double drive = -gamepad1.left_stick_y;
-        double turn  =  gamepad1.right_stick_x;
 
         double left_x = gamepad1.left_stick_x;
         double left_y = -gamepad1.left_stick_y;

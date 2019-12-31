@@ -159,16 +159,16 @@ public class FoundationBlue extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        rotate(45, 0.5);
+        //rotate(45, 0.5);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //encoderDrive(0.75,  25,  25, 5);
-        //encoderDrive(0.25,  5,  5, 5);
-        //servoFoundation1.setPosition(-1.0);
-        //servoFoundation2.setPosition(1.0);
+        encoderDrive(0.75,  25,  25, 5);
+        encoderDrive(0.25,  5,  5, 5);
+        servoFoundation1.setPosition(-1.0);
+        servoFoundation2.setPosition(1.0);
         sleep(5000);
-        //encoderDrive2(-0.75, -20,-20,5);
+        encoderDrive2(-0.75, -20,-20,5);
 
 
 

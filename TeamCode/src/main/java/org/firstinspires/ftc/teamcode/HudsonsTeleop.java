@@ -72,16 +72,22 @@ public class HudsonsTeleop extends OpMode
     private Servo servoFoundation1 = null;
     private Servo servoFoundation2 = null;
     private Servo servoCapstone = null;
+
     private int iterations0 = 1;
     private int iterations1 = 1;
     private int iterations2 = 1;
-    private boolean first = true;
-    private int amount;
     private boolean active0 = false;
     private boolean active1 = false;
     private boolean active2 = false;
-    Orientation angles;
+    private boolean active3 = false;
+    private boolean button_rb_IsActive = false;
+    private boolean button_lb_IsActive = false;
+    private boolean slowmode = false;
+    private boolean fieldCentric = true;
+    private double angleOffset = 0;
     BNO055IMU imu;
+
+
 
 
     /*
@@ -147,7 +153,10 @@ public class HudsonsTeleop extends OpMode
      */
     @Override
     public void start() {
-        runtime.reset();
+   //     ans = test(false);
+   //     new_x = ans[0];
+   //     new_y = ans[1];
+   //     runtime.reset();
     }
 
     /*
@@ -160,13 +169,12 @@ public class HudsonsTeleop extends OpMode
         double rightFrontPower;
         double leftRearPower;
         double rightRearPower;
+        boolean button_lb = gamepad1.left_bumper;
+        boolean button_rb = gamepad1.right_bumper;
         boolean button_Y = gamepad2.y;
         boolean button_B = gamepad2.b;
         boolean button_dpad_down = gamepad2.dpad_down;
-
-
-
-        amount += 1;
+        boolean button_dpad_up = gamepad1.dpad_up;
 
         if(button_Y && !active0) {
             active0 = true;
@@ -194,12 +202,12 @@ public class HudsonsTeleop extends OpMode
                 servoFoundation1.setPosition(-1.0);
                 servoFoundation2.setPosition(1.0);
                 iterations1++;
-               }
+            }
 
-           }
-           else if (!button_B) {
-               active1 = false;
-           }
+        }
+        else if (!button_B) {
+            active1 = false;
+        }
 
         if(button_dpad_down && !active2) {
             active2 = true;
@@ -216,26 +224,56 @@ public class HudsonsTeleop extends OpMode
             active2 = false;
         }
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
+        if (button_rb && !button_rb_IsActive){
+            button_rb_IsActive = true;
+            slowmode = !slowmode;
+        }
+        else if (!button_rb) {
+            button_rb_IsActive = false;
+        }
+        if(button_dpad_up) {
+            resetAngle();
+        }
 
         double left_x = gamepad1.left_stick_x;
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
         double currentAngle = Math.toRadians(getHeading());
 
-        double new_x = left_x * Math.cos(currentAngle) - left_y * Math.sin(currentAngle);
-        double new_y = left_x * Math.sin(currentAngle) + left_y * Math.cos(currentAngle);
+        if (slowmode){
+            left_y = left_y / 3;
+            left_x = left_x / 3;
+            right_x = right_x / 3;
+        }
 
-        leftFrontPower   = Range.clip(new_y + right_x + new_x, -1.0, 1.0) ;
-        rightFrontPower  = Range.clip(new_y - right_x - new_x, -1.0, 1.0) ;
-        leftRearPower    = Range.clip(new_y + right_x - new_x, -1.0, 1.0) ;
-        rightRearPower   = Range.clip(new_y - right_x + new_x, -1.0, 1.0) ;
+        if (button_lb && !button_lb_IsActive){
+            button_lb_IsActive = true;
+            fieldCentric = !fieldCentric;
+        }
+        else if (!button_lb) {
+            button_lb_IsActive = false;
+        }
+
+        if (fieldCentric) {
+
+            double new_x = left_x * Math.cos(currentAngle) - left_y * Math.sin(currentAngle);
+            double new_y = left_x * Math.sin(currentAngle) + left_y * Math.cos(currentAngle);
+
+            left_x = new_x;
+            left_y = new_y;
+        }
+
+        leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
+        rightFrontPower  = Range.clip(left_y - right_x - left_x, -1.0, 1.0) ;
+        leftRearPower    = Range.clip(left_y + right_x - left_x, -1.0, 1.0) ;
+        rightRearPower   = Range.clip(left_y - right_x + left_x, -1.0, 1.0) ;
 
 
+        // Choose to drive using either Tank Mode, or POV Mode
+        // Comment out the method that's not used.  The default below is POV.
+
+        // POV Mode uses left stick to go forward, and right stick to turn.
+        // - This uses basic math to combine motions and is easier to drive straight.
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
@@ -257,27 +295,31 @@ public class HudsonsTeleop extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower, leftRearPower, rightRearPower);
         telemetry.addData("Gyro", "Current Heading: %.2f", newAngle);
-
-
     }
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
+
     @Override
     public void stop() {
 
-        }
+    }
+
+    private void resetAngle() {
+        Orientation currentAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angleOffset = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ 360) %360;
+    }
 
     private double getHeading() {
         Orientation currentAngles;
         double heading;
 
         currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        heading = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ 360) %360;
+        heading = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ angleOffset + 360) %360;
         return heading;
     }
+}
 
-    }
 
 

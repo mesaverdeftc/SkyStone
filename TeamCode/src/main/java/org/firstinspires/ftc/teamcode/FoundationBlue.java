@@ -200,10 +200,11 @@ public class FoundationBlue extends LinearOpMode {
         leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftFrontDrive.setPower(-speed);
-        rightFrontDrive.setPower(speed);
-        leftRearDrive.setPower(-speed);
-        rightRearDrive.setPower(speed);
+        //slowed down speed to be more accurate in angle turns
+        leftFrontDrive.setPower(-speed/2);
+        rightFrontDrive.setPower(speed/2);
+        leftRearDrive.setPower(-speed/2);
+        rightRearDrive.setPower(speed/2);
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         while(!isStopRequested() && desiredAngle >= angles.firstAngle) {

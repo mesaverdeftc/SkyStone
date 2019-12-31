@@ -80,9 +80,8 @@ public class HudsonsTeleop extends OpMode
     private boolean active0 = false;
     private boolean active1 = false;
     private boolean active2 = false;
-    BNO055IMU imu;
     Orientation angles;
-
+    BNO055IMU imu;
 
 
     /*
@@ -165,6 +164,8 @@ public class HudsonsTeleop extends OpMode
         boolean button_B = gamepad2.b;
         boolean button_dpad_down = gamepad2.dpad_down;
 
+
+
         amount += 1;
 
         if(button_Y && !active0) {
@@ -224,11 +225,15 @@ public class HudsonsTeleop extends OpMode
         double left_x = gamepad1.left_stick_x;
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
+        double currentAngle = Math.toRadians(getHeading());
 
-        leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
-        rightFrontPower  = Range.clip(left_y - right_x - left_x, -1.0, 1.0) ;
-        leftRearPower    = Range.clip(left_y + right_x - left_x, -1.0, 1.0) ;
-        rightRearPower   = Range.clip(left_y - right_x + left_x, -1.0, 1.0) ;
+        double new_x = left_x * Math.cos(currentAngle) - left_y * Math.sin(currentAngle);
+        double new_y = left_x * Math.sin(currentAngle) + left_y * Math.cos(currentAngle);
+
+        leftFrontPower   = Range.clip(new_y + right_x + new_x, -1.0, 1.0) ;
+        rightFrontPower  = Range.clip(new_y - right_x - new_x, -1.0, 1.0) ;
+        leftRearPower    = Range.clip(new_y + right_x - new_x, -1.0, 1.0) ;
+        rightRearPower   = Range.clip(new_y - right_x + new_x, -1.0, 1.0) ;
 
 
 
@@ -243,11 +248,15 @@ public class HudsonsTeleop extends OpMode
         leftRearDrive.setPower(leftRearPower);
         rightRearDrive.setPower(rightRearPower);
 
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double newAngle = getHeading();
         // Show the elapsed game time and wheel power.
+        telemetry.addData("Values", "leftX = %.2f, leftY = %.2f", left_x, left_y);
+        telemetry.addData("Sin/Cos", "Sin: %.2f, Cos: %.2f", Math.sin(currentAngle), Math.cos(currentAngle));
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower, leftRearPower, rightRearPower);
-        telemetry.addData("Gyro", "Current Heading: %.1f", AngleUnit.DEGREES.normalize(angles.firstAngle));
+        telemetry.addData("Gyro", "Current Heading: %.2f", newAngle);
 
 
     }
@@ -259,6 +268,16 @@ public class HudsonsTeleop extends OpMode
     public void stop() {
 
         }
+
+    private double getHeading() {
+        Orientation currentAngles;
+        double heading;
+
+        currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        heading = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ 360) %360;
+        return heading;
+    }
+
     }
 
 

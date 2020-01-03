@@ -68,9 +68,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="FoundationBlue", group="Linear Opmode")
+@Autonomous(name="FoundationRed", group="Linear Opmode")
 //@Disabled
-public class FoundationBlue extends LinearOpMode {
+public class FoundationRed extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -162,18 +162,18 @@ public class FoundationBlue extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(0.75,  25,  25, 5);
+        encoderDrive(1,  25,  25, 5);
+        encoderStafe(.5, 11,false,5);
         encoderDrive(0.25,  7,  7, 5);
         servoFoundation1.setPosition(-1.0);
         servoFoundation2.setPosition(1.0);
-        sleep(3000);
-        encoderDrive2(-0.75, -39,-39,5);
-        rotate(90, 0.5);
-        encoderDrive(0.75,  5,  5, 5);
+        sleep(1000);
+        encoderDrive2(-0.75, -39,-29,5);
+        rotate(-90, 0.5);
+        encoderDrive(0.75,  13,  13, 5);
         servoFoundation1.setPosition(1.0);
         servoFoundation2.setPosition(-1.0);
-        encoderStafe(0.75, 10, true, 5);
-        encoderDrive2(-0.75, -29,-29,5);
+        encoderDrive2(-0.75, -37,-37,7);
 
 
 
@@ -203,13 +203,13 @@ public class FoundationBlue extends LinearOpMode {
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //slowed down speed to be more accurate in angle turns
-        leftFrontDrive.setPower(-speed/2);
-        rightFrontDrive.setPower(speed/2);
-        leftRearDrive.setPower(-speed/2);
-        rightRearDrive.setPower(speed/2);
+        leftFrontDrive.setPower(speed/2);
+        rightFrontDrive.setPower(-speed/2);
+        leftRearDrive.setPower(speed/2);
+        rightRearDrive.setPower(-speed/2);
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        while(!isStopRequested() && desiredAngle >= angles.firstAngle) {
+        while(!isStopRequested() && desiredAngle <= angles.firstAngle) {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             telemetry.addData("Gyro","DesiredAngle: %.1f, Current Angle: %.1f", desiredAngle, AngleUnit.DEGREES.normalize(angles.firstAngle));
             telemetry.update();
@@ -219,15 +219,15 @@ public class FoundationBlue extends LinearOpMode {
         rightFrontDrive.setPower(0);
         leftRearDrive.setPower(0);
         rightRearDrive.setPower(0);
-        sleep(1000);
+        sleep(200);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Gyro","DesiredAngle: %.1f, Current Angle: %.1f", desiredAngle, AngleUnit.DEGREES.normalize(angles.firstAngle));
         telemetry.update();
     }
 
     public void encoderDrive(double speed,
-                              double leftInches, double rightInches,
-                              double timeoutS) {
+                             double leftInches, double rightInches,
+                             double timeoutS) {
         int newLeftFrontTarget;
         int newRightFrontTarget;
         int newLeftRearTarget;
@@ -287,8 +287,8 @@ public class FoundationBlue extends LinearOpMode {
         }
     }
     public void encoderDrive2(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
+                              double leftInches, double rightInches,
+                              double timeoutS) {
         int newLeftFrontTarget;
         int newRightFrontTarget;
         int newLeftRearTarget;
@@ -316,10 +316,10 @@ public class FoundationBlue extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftFrontDrive.setPower((speed)/2);
-            rightFrontDrive.setPower((speed)/2);
-            leftRearDrive.setPower((speed)/2);
-            rightRearDrive.setPower((speed)/2);
+            leftFrontDrive.setPower(Math.abs(speed)/2);
+            rightFrontDrive.setPower(Math.abs(speed)/2);
+            leftRearDrive.setPower(Math.abs(speed)/2);
+            rightRearDrive.setPower(Math.abs(speed)/2);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -357,7 +357,7 @@ public class FoundationBlue extends LinearOpMode {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-            if(direction = false) {
+            if(direction == false) {
                 // Determine new target position, and pass to motor controller
                 newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
                 newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);

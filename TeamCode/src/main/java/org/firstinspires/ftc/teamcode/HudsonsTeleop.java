@@ -73,13 +73,12 @@ public class HudsonsTeleop extends OpMode
     private Servo servoFoundation2 = null;
     private Servo servoCapstone = null;
 
-    private int iterations0 = 1;
-    private int iterations1 = 1;
-    private int iterations2 = 1;
+    private boolean boolean0 = false;
+    private boolean boolean1 = false;
+    private boolean boolean2 = false;
     private boolean active0 = false;
     private boolean active1 = false;
     private boolean active2 = false;
-    private boolean active3 = false;
     private boolean button_rb_IsActive = false;
     private boolean button_lb_IsActive = false;
     private boolean slowmode = false;
@@ -178,12 +177,12 @@ public class HudsonsTeleop extends OpMode
 
         if(button_Y && !active0) {
             active0 = true;
-            if (iterations0 % 2 == 0) {
+            if (boolean0 == true) {
                 servoBlock.setPosition(1.0);
-                iterations0++;
+                boolean0 = false;
             } else {
                 servoBlock.setPosition(-1.0);
-                iterations0++;
+                boolean0 = true;
             }
 
         }
@@ -194,14 +193,14 @@ public class HudsonsTeleop extends OpMode
 
         if(button_B && !active1) {
             active1 = true;
-            if (iterations1 % 2 == 0) {
+            if (boolean1 == true) {
                 servoFoundation1.setPosition(1.0);
                 servoFoundation2.setPosition(-1.0);
-                iterations1++;
+                boolean1 =false;
             } else {
                 servoFoundation1.setPosition(-1.0);
                 servoFoundation2.setPosition(1.0);
-                iterations1++;
+                boolean1 = true;
             }
 
         }
@@ -211,12 +210,12 @@ public class HudsonsTeleop extends OpMode
 
         if(button_dpad_down && !active2) {
             active2 = true;
-            if (iterations2 % 2 == 0) {
+            if (boolean2 == true) {
                 servoCapstone.setPosition(1.0);
-                iterations2++;
+                boolean2 = false;
             } else {
                 servoCapstone.setPosition(-1.0);
-                iterations2++;
+                boolean2 = true;
             }
 
         }

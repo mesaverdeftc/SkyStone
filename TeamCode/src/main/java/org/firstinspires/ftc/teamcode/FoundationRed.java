@@ -169,10 +169,11 @@ public class FoundationRed extends LinearOpMode {
         servoFoundation2.setPosition(1.0);
         sleep(1000);
         encoderDrive2(-0.75, -39,-29,5);
-        rotate(-90, 0.5);
+        rotate(-90, 1);
         encoderDrive(0.75,  13,  13, 5);
         servoFoundation1.setPosition(1.0);
         servoFoundation2.setPosition(-1.0);
+        encoderStafe(.5, 12,false,5);
         encoderDrive2(-0.75, -37,-37,7);
 
 

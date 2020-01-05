@@ -166,12 +166,13 @@ public class FoundationBlue extends LinearOpMode {
         encoderDrive(0.25,  7,  7, 5);
         servoFoundation1.setPosition(-1.0);
         servoFoundation2.setPosition(1.0);
-        sleep(3000);
+        sleep(1000);
         encoderDrive2(-0.75, -39,-39,5);
-        rotate(90, 0.5);
+        rotate(90, 1);
         encoderDrive(0.75,  5,  5, 5);
         servoFoundation1.setPosition(1.0);
         servoFoundation2.setPosition(-1.0);
+        sleep(1000);
         encoderStafe(0.75, 10, true, 5);
         encoderDrive2(-0.75, -29,-29,5);
 
@@ -316,10 +317,10 @@ public class FoundationBlue extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftFrontDrive.setPower((speed)/2);
-            rightFrontDrive.setPower((speed)/2);
-            leftRearDrive.setPower((speed)/2);
-            rightRearDrive.setPower((speed)/2);
+            leftFrontDrive.setPower(Math.abs(speed));
+            rightFrontDrive.setPower(Math.abs(speed));
+            leftRearDrive.setPower(Math.abs(speed));
+            rightRearDrive.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits

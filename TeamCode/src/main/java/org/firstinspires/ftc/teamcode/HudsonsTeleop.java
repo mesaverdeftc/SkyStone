@@ -30,7 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+// import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -72,6 +72,7 @@ public class HudsonsTeleop extends OpMode
     private Servo servoFoundation1 = null;
     private Servo servoFoundation2 = null;
     private Servo servoCapstone = null;
+    private Servo servoGraber = null;
 
     private boolean boolean0 = false;
     private boolean boolean1 = false;
@@ -79,12 +80,17 @@ public class HudsonsTeleop extends OpMode
     private boolean active0 = false;
     private boolean active1 = false;
     private boolean active2 = false;
+    private boolean active3 = false;
+    private boolean graberClosed = false;
     private boolean button_rb_IsActive = false;
     private boolean button_lb_IsActive = false;
     private boolean slowmode = false;
-    private boolean fieldCentric = true;
+    private boolean fieldCentric = false;
     private double angleOffset = 0;
+
+
     BNO055IMU imu;
+
 
 
 
@@ -106,6 +112,7 @@ public class HudsonsTeleop extends OpMode
         servoFoundation1 = hardwareMap.get(Servo.class, "foundation_servo1");
         servoFoundation2 = hardwareMap.get(Servo.class, "foundation_servo2");
         servoCapstone = hardwareMap.get(Servo.class, "capstone_servo3");
+        servoGraber = hardwareMap.get(Servo.class, "grabber_servo4");
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -172,6 +179,7 @@ public class HudsonsTeleop extends OpMode
         boolean button_rb = gamepad1.right_bumper;
         boolean button_Y = gamepad2.y;
         boolean button_B = gamepad2.b;
+        boolean button_A = gamepad2.a;
         boolean button_dpad_down = gamepad2.dpad_down;
         boolean button_dpad_up = gamepad1.dpad_up;
 
@@ -260,6 +268,21 @@ public class HudsonsTeleop extends OpMode
 
             left_x = new_x;
             left_y = new_y;
+        }
+
+        if(button_A && !active3) {
+            active3 = true;
+            if (graberClosed) {
+                servoGraber.setPosition(-1.0);
+                graberClosed = false;
+            } else {
+                servoGraber.setPosition(1.0);
+                graberClosed = true;
+            }
+        }
+
+        else if (!button_A) {
+            active3 = false;
         }
 
         leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;

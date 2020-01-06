@@ -162,28 +162,22 @@ public class FoundationBlue extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(0.75,  25,  25, 5);
+        encoderDrive(1.0,  25,  25, 5);
+        encoderStafe(0.5, 11, true, 5); //left
         encoderDrive(0.25,  7,  7, 5);
         servoFoundation1.setPosition(-1.0);
         servoFoundation2.setPosition(1.0);
-        sleep(1000);
-        encoderDrive2(-0.75, -39,-39,5);
-        rotate(90, 1);
-        encoderDrive(0.75,  5,  5, 5);
+        sleep(2000);
+        encoderDrive2(-0.75, -29,-29,5);
+        rotate(90, 0.5);
+        encoderDrive(1,  20,  20, 5);
         servoFoundation1.setPosition(1.0);
         servoFoundation2.setPosition(-1.0);
         sleep(1000);
-        encoderStafe(0.75, 10, true, 5);
-        encoderDrive2(-0.75, -29,-29,5);
+        encoderStafe(1, 15, true, 5);
+        sleep(1000);
+        encoderDrive2(-0.75, -34,-34,5);
 
-
-
-        /*
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        */
-
-        sleep(1000);     // pause for servos to move
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -204,10 +198,10 @@ public class FoundationBlue extends LinearOpMode {
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //slowed down speed to be more accurate in angle turns
-        leftFrontDrive.setPower(-speed/2);
-        rightFrontDrive.setPower(speed/2);
-        leftRearDrive.setPower(-speed/2);
-        rightRearDrive.setPower(speed/2);
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(speed);
+        leftRearDrive.setPower(-speed);
+        rightRearDrive.setPower(speed);
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         while(!isStopRequested() && desiredAngle >= angles.firstAngle) {
@@ -279,10 +273,10 @@ public class FoundationBlue extends LinearOpMode {
             rightRearDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
@@ -340,10 +334,10 @@ public class FoundationBlue extends LinearOpMode {
             rightRearDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
@@ -358,7 +352,7 @@ public class FoundationBlue extends LinearOpMode {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-            if(direction = false) {
+            if(direction == false) {
                 // Determine new target position, and pass to motor controller
                 newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
                 newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
@@ -405,6 +399,7 @@ public class FoundationBlue extends LinearOpMode {
                 rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             } else {
                 // Determine new target position, and pass to motor controller
                 newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);

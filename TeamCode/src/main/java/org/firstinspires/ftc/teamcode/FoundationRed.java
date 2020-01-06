@@ -162,28 +162,21 @@ public class FoundationRed extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(1,  25,  25, 5);
-        encoderStafe(.5, 11,false,5);
+        encoderDrive(1.0,  25,  25, 5);
+        encoderStafe(0.5, 11,false,5);
         encoderDrive(0.25,  7,  7, 5);
         servoFoundation1.setPosition(-1.0);
         servoFoundation2.setPosition(1.0);
-        sleep(1000);
-        encoderDrive2(-0.75, -39,-29,5);
-        rotate(-90, 1);
+        sleep(2000);
+        encoderDrive2(-0.75, -29,-29,5);
+        rotate(-90, 0.5);
         encoderDrive(0.75,  13,  13, 5);
         servoFoundation1.setPosition(1.0);
         servoFoundation2.setPosition(-1.0);
-        encoderStafe(.5, 12,false,5);
+        sleep(1000);
+        encoderStafe(.5, 14,false,5);
         encoderDrive2(-0.75, -37,-37,7);
 
-
-
-        /*
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        */
-
-        sleep(1000);     // pause for servos to move
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -204,10 +197,10 @@ public class FoundationRed extends LinearOpMode {
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //slowed down speed to be more accurate in angle turns
-        leftFrontDrive.setPower(speed/2);
-        rightFrontDrive.setPower(-speed/2);
-        leftRearDrive.setPower(speed/2);
-        rightRearDrive.setPower(-speed/2);
+        leftFrontDrive.setPower(speed);
+        rightFrontDrive.setPower(-speed);
+        leftRearDrive.setPower(speed);
+        rightRearDrive.setPower(-speed);
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         while(!isStopRequested() && desiredAngle <= angles.firstAngle) {
@@ -279,10 +272,10 @@ public class FoundationRed extends LinearOpMode {
             rightRearDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
@@ -317,10 +310,10 @@ public class FoundationRed extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftFrontDrive.setPower(Math.abs(speed)/2);
-            rightFrontDrive.setPower(Math.abs(speed)/2);
-            leftRearDrive.setPower(Math.abs(speed)/2);
-            rightRearDrive.setPower(Math.abs(speed)/2);
+            leftFrontDrive.setPower(Math.abs(speed));
+            rightFrontDrive.setPower(Math.abs(speed));
+            leftRearDrive.setPower(Math.abs(speed));
+            rightRearDrive.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -340,10 +333,10 @@ public class FoundationRed extends LinearOpMode {
             rightRearDrive.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }

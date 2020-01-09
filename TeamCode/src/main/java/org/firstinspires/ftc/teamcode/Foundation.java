@@ -11,7 +11,7 @@ public class Foundation extends Attachment{
         servo2 = hardwareMap.get(Servo.class, servoName2);
 
         upPosition = upValue;
-        downPostion = downValue;
+        downPosition = downValue;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class Foundation extends Attachment{
 
     @Override
     public void down() {
-        servo.setPosition(downPostion);
-        servo2.setPosition(-downPostion);
+        servo.setPosition(downPosition);
+        servo2.setPosition(-downPosition);
     }
 }

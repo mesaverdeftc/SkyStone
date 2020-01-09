@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,8 +23,15 @@ public class DriveTrain {
     public double leftRearPower = 0.0;
     public double rightRearPower = 0.0;
 
-    BNO055IMU imu;
+    protected BNO055IMU imu;
     private double angleOffset = 0;
+
+
+    private static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: ANDYMARK Motor Encoder
+    private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    private static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    private static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
 
     public void init (HardwareMap hardwareMap) {
 
@@ -81,6 +90,13 @@ public class DriveTrain {
         rightRearDrive.setPower(rightRearPower);
     }
 
+    public void stop() {
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftRearDrive.setPower(0);
+        rightRearDrive.setPower(0);
+    }
+
     public void resetAngle() {
         Orientation currentAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         angleOffset = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ 360) %360;
@@ -93,5 +109,201 @@ public class DriveTrain {
         currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         heading = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ angleOffset + 360) %360;
         return heading;
+    }
+    public double getHeading2() {
+        Orientation currentAngles;
+        double heading;
+
+        currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        heading = ((AngleUnit.DEGREES.normalize(currentAngles.firstAngle)));
+        return heading;
+    }
+
+
+
+    public void rotate(LinearOpMode linearOpMode, double desiredAngle, double speed) {
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //slowed down speed to be more accurate in angle turns
+        leftFrontDrive.setPower(-speed);
+        rightFrontDrive.setPower(speed);
+        leftRearDrive.setPower(-speed);
+        rightRearDrive.setPower(speed);
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        if(speed > 0) {
+            while(!linearOpMode.isStopRequested() && desiredAngle >= angles.firstAngle) {
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                linearOpMode.telemetry.addData("Gyro","DesiredAngle: %.1f, Current Angle: %.1f", desiredAngle, AngleUnit.DEGREES.normalize(angles.firstAngle));
+                linearOpMode.telemetry.update();
+            }
+        } else {
+            while (!linearOpMode.isStopRequested() && desiredAngle <= angles.firstAngle) {
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                linearOpMode.telemetry.addData("Gyro", "DesiredAngle: %.1f, Current Angle: %.1f", desiredAngle, AngleUnit.DEGREES.normalize(angles.firstAngle));
+                linearOpMode.telemetry.update();
+            }
+        }
+        stop();
+    }
+
+    public void encoderDrive(LinearOpMode linearOpMode, ElapsedTime runtime, double speed,
+                             double inches,
+                             double timeoutS) {
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
+        int newLeftRearTarget;
+        int newRightRearTarget;
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
+            newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
+            newRightRearTarget = rightRearDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
+
+            leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+            rightFrontDrive.setTargetPosition(newRightFrontTarget);
+            leftRearDrive.setTargetPosition(newLeftRearTarget);
+            rightRearDrive.setTargetPosition(newRightRearTarget);
+
+            // Turn On RUN_TO_POSITION
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            leftFrontDrive.setPower(Math.abs(speed));
+            rightFrontDrive.setPower(Math.abs(speed));
+            leftRearDrive.setPower(Math.abs(speed));
+            rightRearDrive.setPower(Math.abs(speed));
+
+            while (linearOpMode.opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftRearDrive.isBusy() && rightRearDrive.isBusy())) {
+            }
+
+            // Stop all motion;
+            stop();
+
+            // Turn off RUN_TO_POSITION
+            // leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+    public void encoderStafe(LinearOpMode linearOpMode, ElapsedTime runtime, double speed,
+                             double inches, boolean direction,
+                             double timeoutS) {
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
+        int newLeftRearTarget;
+        int newRightRearTarget;
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+            if(direction == false) {
+                // Determine new target position, and pass to motor controller
+                newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+                newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
+                newLeftRearTarget = leftRearDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
+                newRightRearTarget = rightRearDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+
+                leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+                rightFrontDrive.setTargetPosition(newRightFrontTarget);
+                leftRearDrive.setTargetPosition(newLeftRearTarget);
+                rightRearDrive.setTargetPosition(newRightRearTarget);
+
+                // Turn On RUN_TO_POSITION
+                leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                // reset the timeout time and start motion.
+                runtime.reset();
+                leftFrontDrive.setPower(Math.abs(speed));
+                rightFrontDrive.setPower(-Math.abs(speed));
+                leftRearDrive.setPower(-Math.abs(speed));
+                rightRearDrive.setPower(Math.abs(speed));
+
+                // keep looping while we are still active, and there is time left, and both motors are running.
+                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+                // its target position, the motion will stop.  This is "safer" in the event that the robot will
+                // always end the motion as soon as possible.
+                // However, if you require that BOTH motors have finished their moves before the robot continues
+                // onto the next step, use (isBusy() || isBusy()) in the loop test.
+                while (linearOpMode.opModeIsActive() &&
+                        (runtime.seconds() < timeoutS) &&
+                        (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftRearDrive.isBusy() && rightRearDrive.isBusy())) {
+                }
+
+                // Stop all motion;
+                stop();
+
+                // Turn off RUN_TO_POSITION
+                leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            } else {
+                // Determine new target position, and pass to motor controller
+                newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
+                newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+                newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
+                newRightRearTarget = rightRearDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
+
+                leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+                rightFrontDrive.setTargetPosition(newRightFrontTarget);
+                leftRearDrive.setTargetPosition(newLeftRearTarget);
+                rightRearDrive.setTargetPosition(newRightRearTarget);
+
+                // Turn On RUN_TO_POSITION
+                leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                leftRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                // reset the timeout time and start motion.
+                runtime.reset();
+                leftFrontDrive.setPower(-Math.abs(speed));
+                rightFrontDrive.setPower(Math.abs(speed));
+                leftRearDrive.setPower(Math.abs(speed));
+                rightRearDrive.setPower(-Math.abs(speed));
+
+                // keep looping while we are still active, and there is time left, and both motors are running.
+                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+                // its target position, the motion will stop.  This is "safer" in the event that the robot will
+                // always end the motion as soon as possible.
+                // However, if you require that BOTH motors have finished their moves before the robot continues
+                // onto the next step, use (isBusy() || isBusy()) in the loop test.
+                while (linearOpMode.opModeIsActive() &&
+                        (runtime.seconds() < timeoutS) &&
+                        (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftRearDrive.isBusy() && rightRearDrive.isBusy())) {
+                }
+
+                // Stop all motion;
+                stop();
+
+                // Turn off RUN_TO_POSITION
+                leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+            //  sleep(250);   // optional pause after each move
+        }
     }
 }

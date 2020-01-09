@@ -131,7 +131,6 @@ public class HudsonsTeleop extends OpMode
 
         if(buttonB.toggled(gamepad2.b)) {
             foundation.toggle(buttonB.toggleState);
-            foundation.toggle(buttonB.toggleState);
         }
 
         if(button_dpad_down.toggled(gamepad2.dpad_down)) {
@@ -150,7 +149,6 @@ public class HudsonsTeleop extends OpMode
             slowmode = !slowmode;
         }
 
-        // begins drive routine from DriveTrain class
         if(slowmode) {
             left_y = left_y / 3;
             left_x = left_x / 3;

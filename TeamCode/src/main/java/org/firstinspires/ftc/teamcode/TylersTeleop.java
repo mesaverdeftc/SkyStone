@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -36,6 +37,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 /**
@@ -53,7 +59,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="Tyler's Teleop", group="Iterative Opmode")
-// @Disabled
+@Disabled
 public class TylersTeleop extends OpMode
 {
     // Declare OpMode members.
@@ -63,6 +69,7 @@ public class TylersTeleop extends OpMode
     private DcMotor rightFrontDrive = null;
     private DcMotor rightRearDrive = null;
     private Servo servoBlock = null;
+    private Servo servoGraber = null;
     private Servo servoFoundation1 = null;
     private Servo servoFoundation2 = null;
     private Servo servoCapstone = null;
@@ -80,6 +87,14 @@ public class TylersTeleop extends OpMode
     private boolean button_rb_IsActive = false;
     private boolean slowmode = false;
 
+    private boolean button_x_IsActive = false;
+    private boolean graberClosed = false;
+
+
+    // The IMU sensor object
+    BNO055IMU imu;
+    Orientation angles;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -96,9 +111,15 @@ public class TylersTeleop extends OpMode
         rightRearDrive = hardwareMap.get(DcMotor.class, "right_rear_drive");
 
         servoBlock = hardwareMap.get(Servo.class, "block_servo0");
+        servoGraber = hardwareMap.get(Servo.class, "grabber_servo4");
         servoFoundation1 = hardwareMap.get(Servo.class, "foundation_servo1");
         servoFoundation2 = hardwareMap.get(Servo.class, "foundation_servo2");
         servoCapstone = hardwareMap.get(Servo.class, "capstone_servo3");
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -107,8 +128,25 @@ public class TylersTeleop extends OpMode
         leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
         rightRearDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = false;
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
         // Tell the driver that initialization is complete.
+        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
     /*
@@ -149,6 +187,7 @@ public class TylersTeleop extends OpMode
         boolean button_rb = gamepad1.right_bumper;
 
         boolean button_y = gamepad2.y;
+        boolean button_x = gamepad2.x;
         boolean button_b = gamepad2.b;
         boolean button_dpad_down = gamepad2.dpad_down;
 
@@ -165,6 +204,21 @@ public class TylersTeleop extends OpMode
         }
         else if (!button_y) {
             active0 = false;
+        }
+
+        if(button_x && !button_x_IsActive) {
+            button_x_IsActive = true;
+            if (graberClosed) {
+                servoGraber.setPosition(-1.0);
+                graberClosed = false;
+            } else {
+                servoGraber.setPosition(1.0);
+                graberClosed = true;
+            }
+
+        }
+        else if (!button_x) {
+            button_x_IsActive = false;
         }
 
         // button B on controller 2 controls the foundation grabber servos
@@ -201,6 +255,7 @@ public class TylersTeleop extends OpMode
             active2 = false;
         }
 
+        // The right bumper button toggles slowmode.  This simulates a manual transmission.
         if (button_rb && !button_rb_IsActive){
             button_rb_IsActive = true;
             slowmode = !slowmode;
@@ -209,12 +264,18 @@ public class TylersTeleop extends OpMode
             button_rb_IsActive = false;
         }
 
+        // If our simulated manual transmission is in slowmode we divide the joystick values
+        // by 3 to simulate a slower gear ratio on the robot.
         if (slowmode){
             left_y = left_y / 3;
             left_x = left_x / 3;
             right_x = right_x / 3;
         }
 
+        // left_y controls forward and backward power
+        // left_x controls the strafing power
+        // right_x is turning the robot
+        // Combining the values together makes the robot go in any direction and rotate.
         leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
         rightFrontPower  = Range.clip(left_y - right_x - left_x, -1.0, 1.0) ;
         leftRearPower    = Range.clip(left_y + right_x - left_x, -1.0, 1.0) ;
@@ -235,10 +296,13 @@ public class TylersTeleop extends OpMode
             loops = 0;
         }
 
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower, leftRearPower, rightRearPower);
-        telemetry.addData("Loop per Seconds", "%.02f lps", loopsPerSecond);
+        telemetry.addData("Heading", "%.1f", AngleUnit.DEGREES.normalize(angles.firstAngle));
+        telemetry.addData("Loop per Seconds", "%.2f lps", loopsPerSecond);
     }
 
     /*

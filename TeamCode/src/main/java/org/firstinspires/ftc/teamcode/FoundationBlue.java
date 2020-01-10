@@ -71,6 +71,8 @@ public class FoundationBlue extends LinearOpMode {
     public void runOpMode() {
 
         foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, -1.0);
+        foundation.up();
+
         driveTrain.init(hardwareMap);
 
         // make sure the imu gyro is calibrated before continuing.

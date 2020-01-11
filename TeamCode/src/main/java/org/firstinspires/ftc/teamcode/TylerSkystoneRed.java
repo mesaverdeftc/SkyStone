@@ -68,15 +68,15 @@ public class TylerSkystoneRed extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(200);
-        driveTrain.gyroDrive(this, runtime, 1, 72, 0, 10);
+        driveTrain.gyroDrive(this, runtime, 1, 68, 0, 10);
         block.down();
         sleep(750);
         grabber.up();
         sleep(500);
         block.up();
         sleep(500);
-        driveTrain.encoderStafe2(this,runtime, .75,4, false, 3);
-        driveTrain.gyroDrive(this, runtime, 1,-79,0,7);
+        driveTrain.encoderStafe2(this,runtime, .75,4, false, 5);
+        driveTrain.gyroDrive(this, runtime, 1,-86,0,7);
         sleep(200);
         double distance = distanceSensor.getDistance(DistanceUnit.INCH);
         if ((distance > 3) && (distance < 12)){
@@ -90,7 +90,7 @@ public class TylerSkystoneRed extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(200);
-        driveTrain.gyroDrive(this, runtime, 1,90,0,7);
+        driveTrain.gyroDrive(this, runtime, 1,94,0,7);
         block.down();
         sleep(500);
         grabber.up();
@@ -99,12 +99,12 @@ public class TylerSkystoneRed extends LinearOpMode {
         sleep(500);
         driveTrain.encoderStafe2(this,runtime, .75,6, false, 3);
         driveTrain.rotate(this, 80,.75);
-        driveTrain.gyroDrive(this, runtime, 0.50, 10, 90, 8);
+        driveTrain.gyroDrive(this, runtime, 0.50, 5, 90, 8);
         foundation.down();
         sleep(500);
-        driveTrain.gyroDrive(this, runtime, -.80, -34, 90, 9);
+        driveTrain.gyroDrive(this, runtime, -.80, -34, 90, 4);
         foundation.up();
-        driveTrain.encoderStafe2(this, runtime, 1, 60, DriveTrain.STRAFE_LEFT, 10 );
+        driveTrain.encoderStafe2(this, runtime, 1, 65, DriveTrain.STRAFE_LEFT, 10 );
         sleep(1000000);
         //driveTrain.gyroDrive(this, runtime, 1, -55, 0, 6);
 

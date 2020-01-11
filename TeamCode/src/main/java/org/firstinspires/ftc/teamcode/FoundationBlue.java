@@ -67,6 +67,9 @@ public class FoundationBlue extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+    private Foundation foundation = new Foundation();
+    private DriveTrain driveTrain = new DriveTrain();
+
     @Override
     public void runOpMode() {
 
@@ -113,9 +116,6 @@ public class FoundationBlue extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
-    private DriveTrain driveTrain = new DriveTrain();
-
-    private Foundation foundation = new Foundation();
 
 }
 /*

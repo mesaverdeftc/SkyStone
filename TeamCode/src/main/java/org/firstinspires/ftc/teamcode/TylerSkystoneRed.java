@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-@Autonomous(name="TylerSkystone", group="Linear Opmode")
+@Autonomous(name="TylerSkystoneRed", group="Linear Opmode")
 //@Disabled
-public class TylerSkystone extends LinearOpMode {
+public class TylerSkystoneRed extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();

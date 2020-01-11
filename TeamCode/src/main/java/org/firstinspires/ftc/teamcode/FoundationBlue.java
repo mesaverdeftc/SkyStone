@@ -106,10 +106,10 @@ public class FoundationBlue extends LinearOpMode {
         sleep(2000);
         driveTrain.encoderDrive(this, runtime, -0.75, -29, 5);
         driveTrain.rotate(this, 90, 0.5);
-        driveTrain.encoderDrive(this, runtime, 1, 13, 5);
+        driveTrain.encoderDrive(this, runtime, -1, -13, 5);
         foundation.up();
         sleep(1000);
-        driveTrain.encoderStafe(this, runtime, .5, 19, true, 5);
+        driveTrain.encoderStafe(this, runtime, .5, 16, true, 5);
         driveTrain.encoderDrive(this, runtime, -1, -37, 5);
 
 

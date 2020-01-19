@@ -40,7 +40,7 @@ public class ColorDistance {
     }
 
     // How to detect a skystone with the color sensor taken from https://www.youtube.com/watch?v=i0AskHFkZ94
-    boolean isSkyStone() {
+    boolean isStone() {
         double r, g, b;
 
         r = sensorColor.red();
@@ -49,6 +49,6 @@ public class ColorDistance {
 
         double calculation = (r * g)/ (b *b);
 
-        return calculation < 1.95;
+        return calculation > 1.95;
     }
 }

@@ -15,15 +15,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class DriveTrain {
-    protected double leftFrontPower = 0.0;
-    protected double rightFrontPower = 0.0;
-    protected double leftRearPower = 0.0;
-    protected double rightRearPower = 0.0;
+    double leftFrontPower = 0.0;
+    double rightFrontPower = 0.0;
+    double leftRearPower = 0.0;
+    double rightRearPower = 0.0;
 
-    protected static final boolean DRIVE_FORWARD = true;
-    protected static final boolean DRIVE_REVERSE = false;
-    protected static final boolean STRAFE_LEFT = true;
-    protected static final boolean STRAFE_RIGHT = false;
+    static final boolean DRIVE_FORWARD = true;
+    static final boolean DRIVE_REVERSE = false;
+    static final boolean STRAFE_LEFT = true;
+    static final boolean STRAFE_RIGHT = false;
 
     private DcMotor leftFrontDrive = null;
     private DcMotor leftRearDrive = null;
@@ -59,6 +59,12 @@ public class DriveTrain {
         leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
         rightRearDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        // Brake when power is set to zero (no coasting)
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRearDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -80,12 +86,32 @@ public class DriveTrain {
 
         if (fieldCentric) {
 
+            // Logrithmic controls as described at https://www.arthuradmiraal.nl/programming/ftc-taking-your-code-to-the-next-level/
+            double x1, y1, x2;
+            x1 = left_x * left_x * Math.signum(left_x);
+            y1 = left_y * left_y * Math.signum(left_y);
+            x2 = right_x * right_x * Math.signum(right_x);
+
+            // Add a Dead Zone as described at https://www.arthuradmiraal.nl/programming/ftc-taking-your-code-to-the-next-level/
+            if(Math.abs(x1) < 0.01) x1 = 0;
+            if(Math.abs(y1) < 0.01) y1 = 0;
+            if(Math.abs(x2) < 0.01) x2 = 0;
+
+            left_x = x1;
+            left_y = y1;
+            right_x = x2;
+
+            /*
+
+            // Field centric driving using a rotation transform https://en.wikipedia.org/wiki/Rotation_matrix
             double currentAngle = Math.toRadians(getHeading());
             double new_x = left_x * Math.cos(currentAngle) - left_y * Math.sin(currentAngle);
             double new_y = left_x * Math.sin(currentAngle) + left_y * Math.cos(currentAngle);
 
             left_x = new_x;
             left_y = new_y;
+
+             */
         }
 
         leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
@@ -399,19 +425,25 @@ public class DriveTrain {
         while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) &&
                 (distanceSensor.getDistance(DistanceUnit.INCH) > inches)) {
 
-/*            currentAngle = getHeading();
-            correction = 0.0;
+            double P_DRIVE_COEFF = 0.06;     // Larger is more responsive, but also less stable
+            double error = getError(angle);
+            double steer = getSteer(error, P_DRIVE_COEFF);
 
-            if (currentAngle > angle){
-                correction -= 0.2;
-            } else {
-                correction += 0.2;
+            double leftSpeed = speed - steer;
+            double rightSpeed = speed + steer;
+
+            // Normalize speeds if either one exceeds +/- 1.0;
+            double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+            if (max > 1.0)
+            {
+                leftSpeed /= max;
+                rightSpeed /= max;
             }
-*/
-            leftFrontDrive.setPower(scale*speed + correction);
-            rightFrontDrive.setPower(scale*(-speed) + correction);
-            leftRearDrive.setPower(scale*(-speed) + correction);
-            rightRearDrive.setPower(scale*speed + correction);
+
+            leftFrontDrive.setPower(scale*rightSpeed);
+            rightFrontDrive.setPower(scale*(-rightSpeed));
+            leftRearDrive.setPower(scale*(-leftSpeed));
+            rightRearDrive.setPower(scale*leftSpeed);
         }
 
         // Stop all motion;
@@ -427,7 +459,7 @@ public class DriveTrain {
 
         int newTargetPosition;
         int distanceRemaining;
-        int stopDistance = (int)(1 * COUNTS_PER_INCH);
+        int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
         boolean direction;
         double newSpeed;
 
@@ -455,7 +487,12 @@ public class DriveTrain {
 
             while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
 
-                distanceRemaining = Math.abs(newTargetPosition - leftFrontDrive.getCurrentPosition());
+                if (speed > 0) {
+                    distanceRemaining = Range.clip(newTargetPosition - leftFrontDrive.getCurrentPosition(), 0, Integer.MAX_VALUE);
+                } else {
+                    distanceRemaining = Range.clip(leftFrontDrive.getCurrentPosition()- newTargetPosition, 0, Integer.MAX_VALUE);
+                }
+
                 if (distanceRemaining < stopDistance) {
                     break;
                 }
@@ -491,6 +528,57 @@ public class DriveTrain {
             stop();
         }
     }
+
+    public void encoderDriveDistance(LinearOpMode linearOpMode,
+                          ElapsedTime runtime,
+                          DistanceSensor distanceSensor,
+                          double speed,
+                          double distanceThreshold,
+                          double angle,
+                          double timeoutS) {
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
+
+                if (distanceSensor.getDistance(DistanceUnit.INCH) > distanceThreshold) {
+                    break;
+                }
+
+                double P_DRIVE_COEFF = 0.06;     // Larger is more responsive, but also less stable
+                double error = getError(angle);
+                double steer = getSteer(error, P_DRIVE_COEFF);
+
+                double leftSpeed = speed - steer;
+                double rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                leftFrontDrive.setPower(leftSpeed);
+                rightFrontDrive.setPower(rightSpeed);
+                leftRearDrive.setPower(leftSpeed);
+                rightRearDrive.setPower(rightSpeed);
+            }
+
+            stop();
+        }
+    }
+
 
     public double getError(double targetAngle) {
 

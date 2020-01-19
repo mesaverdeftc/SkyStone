@@ -95,13 +95,13 @@ public class TestDistanceAndColor extends OpMode
     @Override
     public void loop() {
 
-        int r, g, b;
+        double r, g, b;
 
         r = colorDistance.red();
         g = colorDistance.green();
         b = colorDistance.blue();
 
-        telemetry.addData("Calculation = ", (r*g)/(b*b));
+        telemetry.addData("Calculation = ", "%.2f",(r*g)/(b*b));
 
         telemetry.addData("Alpha", colorDistance.alpha());
         telemetry.addData("Red  ", colorDistance.red());

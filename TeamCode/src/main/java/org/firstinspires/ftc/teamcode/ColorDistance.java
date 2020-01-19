@@ -1,38 +1,54 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class ColorDistance {
 
-    private ColorSensor colorSensor;
-
-    // values is a reference to the hsvValues array.
-    float hsvValues[] = {0F, 0F, 0F};
-    final double SCALE_FACTOR = 255;
+    private ColorSensor sensorColor;
+    private DistanceSensor sensorDistance;
 
     public void init(HardwareMap hardwareMap, String deviceName) {
         // Get a reference to our sensor object.
-        colorSensor = hardwareMap.get(ColorSensor.class, deviceName);
+        sensorColor = hardwareMap.get(ColorSensor.class, deviceName);
+        sensorDistance = hardwareMap.get(DistanceSensor.class, deviceName);
 
-        // If possible, turn the light on in the beginning (it might already be on anyway,
-        // we just make sure it is if we can).
-        if (colorSensor instanceof SwitchableLight) {
-            ((SwitchableLight)colorSensor).enableLight(true);
-        }
     }
 
-    public float [] getHSVColor() {
-        // Read the sensor
+    int red() {
+        return sensorColor.red();
+    }
 
-        Color.RGBToHSV((int) (colorSensor.red() * SCALE_FACTOR),
-                (int) (colorSensor.green() * SCALE_FACTOR),
-                (int) (colorSensor.blue() * SCALE_FACTOR),
-                hsvValues);
+    int blue() {
+        return sensorColor.blue();
+    }
 
-        return hsvValues;
+    int green() {
+        return sensorColor.green();
+    }
+
+    int alpha() {
+        return sensorColor.alpha();
+    }
+
+
+    double getDistance(DistanceUnit distanceUnit) {
+        return sensorDistance.getDistance(distanceUnit);
+    }
+
+    // How to detect a skystone with the color sensor taken from https://www.youtube.com/watch?v=i0AskHFkZ94
+    boolean isSkyStone() {
+        double r, g, b;
+
+        r = sensorColor.red();
+        g = sensorColor.green();
+        b = sensorColor.blue();
+
+        double calculation = (r * g)/ (b *b);
+
+        return calculation < 1.95;
     }
 }

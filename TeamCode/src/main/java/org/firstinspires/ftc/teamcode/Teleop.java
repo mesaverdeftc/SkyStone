@@ -62,7 +62,7 @@ public class Teleop extends OpMode
     private Attachment grabber = new Attachment();
     private Foundation foundation = new Foundation();
     private Attachment capstone = new Attachment();
-    private ColorDistance colorSensor = new ColorDistance();
+    private ColorDistance colorDistance = new ColorDistance();
     private DistanceSensor distanceSensor = null;
 
     private ButtonToggle buttonY = new ButtonToggle();
@@ -92,7 +92,7 @@ public class Teleop extends OpMode
         grabber.init(hardwareMap, "grabber_servo4", 1.0, -1.0);
         foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, -1.0);
         capstone.init(hardwareMap, "capstone_servo3", 1.0, -1.0);
-        colorSensor.init(hardwareMap, "block_color_2");
+        colorDistance.init(hardwareMap, "block_color_2");
         distanceSensor = hardwareMap.get(com.qualcomm.robotcore.hardware.DistanceSensor.class, "distance_1");
 
         // Tell the driver that initialization is complete.
@@ -162,7 +162,7 @@ public class Teleop extends OpMode
             right_x = right_x / 3;
         }
 
-        driveTrain.drive(left_y, left_x, right_x, fieldCentric);
+        driveTrain.drive(left_x, left_y, right_x, fieldCentric);
 
         // Calculate the number of times this method (loop()) get called per second
         double currentTime = runtime.milliseconds();
@@ -176,20 +176,10 @@ public class Teleop extends OpMode
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Loop per Seconds", "%.2f lps", loopsPerSecond);
-        //telemetry.addData("Heading", "%.1f", driveTrain.getHeading());
-        //telemetry.addData("Stick Values", "leftX = %.2f, leftY = %.2f", left_x, left_y);
-        //telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)",
-        //        driveTrain.leftFrontPower, driveTrain.rightFrontPower, driveTrain.leftRearPower, driveTrain.rightRearPower);
-        //telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)",
-         //       driveTrain.leftFrontPower, driveTrain.rightFrontPower, driveTrain.leftRearPower, driveTrain.rightRearPower);
-
-        float [] hsvValues = colorSensor.getHSVColor();
-        telemetry.addLine()
-                .addData("H", "%.3f", hsvValues[0])
-                .addData("S", "%.3f", hsvValues[1])
-                .addData("V", "%.3f", hsvValues[2]);
-        telemetry.addData("Distance", "%.2f cm", distanceSensor.getDistance(DistanceUnit.CM));
-        telemetry.addData("Distance", "%.2f inch", distanceSensor.getDistance(DistanceUnit.INCH));
+        telemetry.addData("Heading", "%.1f", driveTrain.getHeading());
+        telemetry.addData("Stick Values", "leftX = %.2f, leftY = %.2f", left_x, left_y);
+        telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)",
+                driveTrain.leftFrontPower, driveTrain.rightFrontPower, driveTrain.leftRearPower, driveTrain.rightRearPower);
     }
 
     /*

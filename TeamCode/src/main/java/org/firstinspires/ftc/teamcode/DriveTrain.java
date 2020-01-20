@@ -87,6 +87,8 @@ public class DriveTrain {
         if (fieldCentric) {
 
             // Logrithmic controls as described at https://www.arthuradmiraal.nl/programming/ftc-taking-your-code-to-the-next-level/
+            /*
+
             double x1, y1, x2;
             x1 = left_x * left_x * Math.signum(left_x);
             y1 = left_y * left_y * Math.signum(left_y);
@@ -101,7 +103,7 @@ public class DriveTrain {
             left_y = y1;
             right_x = x2;
 
-            /*
+            */
 
             // Field centric driving using a rotation transform https://en.wikipedia.org/wiki/Rotation_matrix
             double currentAngle = Math.toRadians(getHeading());
@@ -110,8 +112,6 @@ public class DriveTrain {
 
             left_x = new_x;
             left_y = new_y;
-
-             */
         }
 
         leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
@@ -146,14 +146,6 @@ public class DriveTrain {
         heading = -((AngleUnit.DEGREES.normalize(currentAngles.firstAngle))+ angleOffset + 360) %360;
         return heading;
     }
-    public double getHeading2() {
-        Orientation currentAngles;
-        double heading;
-
-        currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        heading = ((AngleUnit.DEGREES.normalize(currentAngles.firstAngle)));
-        return heading;
-    }
 
     public void rotate(LinearOpMode linearOpMode, double desiredAngle, double speed) {
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -185,6 +177,7 @@ public class DriveTrain {
         stop();
     }
 
+    /*
     public void encoderDrive(LinearOpMode linearOpMode,
                              ElapsedTime runtime,
                              double speed,
@@ -239,114 +232,10 @@ public class DriveTrain {
             //  sleep(250);   // optional pause after each move
         }
     }
+    */
+
+
     public void encoderStafe(LinearOpMode linearOpMode,
-                             ElapsedTime runtime,
-                             double speed,
-                             double inches,
-                             boolean direction,
-                             double timeoutS) {
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-        int newLeftRearTarget;
-        int newRightRearTarget;
-
-        // Ensure that the opmode is still active
-        if (linearOpMode.opModeIsActive()) {
-            if(direction == false) {
-                // Determine new target position, and pass to motor controller
-                newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-                newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
-                newLeftRearTarget = leftRearDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
-                newRightRearTarget = rightRearDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-
-                leftFrontDrive.setTargetPosition(newLeftFrontTarget);
-                rightFrontDrive.setTargetPosition(newRightFrontTarget);
-                leftRearDrive.setTargetPosition(newLeftRearTarget);
-                rightRearDrive.setTargetPosition(newRightRearTarget);
-
-                // Turn On RUN_TO_POSITION
-                leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // reset the timeout time and start motion.
-                runtime.reset();
-                leftFrontDrive.setPower(Math.abs(speed));
-                rightFrontDrive.setPower(-Math.abs(speed));
-                leftRearDrive.setPower(-Math.abs(speed));
-                rightRearDrive.setPower(Math.abs(speed));
-
-                // keep looping while we are still active, and there is time left, and both motors are running.
-                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-                // its target position, the motion will stop.  This is "safer" in the event that the robot will
-                // always end the motion as soon as possible.
-                // However, if you require that BOTH motors have finished their moves before the robot continues
-                // onto the next step, use (isBusy() || isBusy()) in the loop test.
-                while (linearOpMode.opModeIsActive() &&
-                        (runtime.seconds() < timeoutS) &&
-                        (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftRearDrive.isBusy() && rightRearDrive.isBusy())) {
-                }
-
-                // Stop all motion;
-                stop();
-
-                // Turn off RUN_TO_POSITION
-                leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            } else {
-                // Determine new target position, and pass to motor controller
-                newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
-                newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-                newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int) (inches * COUNTS_PER_INCH);
-                newRightRearTarget = rightRearDrive.getCurrentPosition() - (int) (inches * COUNTS_PER_INCH);
-
-                leftFrontDrive.setTargetPosition(newLeftFrontTarget);
-                rightFrontDrive.setTargetPosition(newRightFrontTarget);
-                leftRearDrive.setTargetPosition(newLeftRearTarget);
-                rightRearDrive.setTargetPosition(newRightRearTarget);
-
-                // Turn On RUN_TO_POSITION
-                leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                // reset the timeout time and start motion.
-                runtime.reset();
-                leftFrontDrive.setPower(-Math.abs(speed));
-                rightFrontDrive.setPower(Math.abs(speed));
-                leftRearDrive.setPower(Math.abs(speed));
-                rightRearDrive.setPower(-Math.abs(speed));
-
-                // keep looping while we are still active, and there is time left, and both motors are running.
-                // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-                // its target position, the motion will stop.  This is "safer" in the event that the robot will
-                // always end the motion as soon as possible.
-                // However, if you require that BOTH motors have finished their moves before the robot continues
-                // onto the next step, use (isBusy() || isBusy()) in the loop test.
-                while (linearOpMode.opModeIsActive() &&
-                        (runtime.seconds() < timeoutS) &&
-                        (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftRearDrive.isBusy() && rightRearDrive.isBusy())) {
-                }
-
-                // Stop all motion;
-                stop();
-
-                // Turn off RUN_TO_POSITION
-                leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-            //  sleep(250);   // optional pause after each move
-        }
-    }
-
-    public void encoderStafe2(LinearOpMode linearOpMode,
                              ElapsedTime runtime,
                              double speed,
                              double inches,
@@ -396,7 +285,7 @@ public class DriveTrain {
         }
     }
 
-    public void gyroStrafe(LinearOpMode linearOpMode,
+    public void gyroStrafeToBlock(LinearOpMode linearOpMode,
                            ElapsedTime runtime,
                            DistanceSensor distanceSensor,
                            double speed,
@@ -406,8 +295,6 @@ public class DriveTrain {
                            double timeoutS) {
 
         int scale;
-        double currentAngle;
-        double correction = 0.0;
 
         if (direction == STRAFE_LEFT)
             scale = -1;

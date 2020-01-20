@@ -121,9 +121,11 @@ public class HudsonsTeleop extends OpMode
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
 
-        if(buttonY.toggled(gamepad2.y)) {
+        /*if(buttonY.toggled(gamepad2.y)) {
             block.toggle(buttonY.toggleState);
-        }
+        }*/
+
+        block.setPosition(gamepad2.left_stick_y);
 
         if(buttonA.toggled(gamepad2.a)) {
             grabber.toggle(buttonA.toggleState);

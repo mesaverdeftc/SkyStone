@@ -27,4 +27,8 @@ public class Attachment {
             down();
         }
     }
+
+    public void setPosition(double position) {
+        servo.setPosition(position);
+    }
 }

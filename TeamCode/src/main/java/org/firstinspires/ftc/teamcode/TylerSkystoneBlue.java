@@ -58,8 +58,8 @@ public class TylerSkystoneBlue extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroStrafe(this, runtime, distanceSensor, .9, 10, true, 90,5 );
-        driveTrain.gyroStrafe(this, runtime, distanceSensor, .2, 2.75, true, 90,10 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .9, 10, true, 90,5 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.75, true, 90,10 );
         block.down();
         sleep(750);
         grabber.down();
@@ -73,12 +73,12 @@ public class TylerSkystoneBlue extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(500);
-        driveTrain.encoderStafe2(this,runtime, .75,4, false, 5);
+        driveTrain.encoderStafe(this,runtime, .75,4, false, 5);
         driveTrain.gyroDrive(this, runtime, 1,86,0,7);
         sleep(200);
         double distance = distanceSensor.getDistance(DistanceUnit.INCH);
         if ((distance > 3) && (distance < 12)){
-            driveTrain.gyroStrafe(this, runtime, distanceSensor, 0.2, 2.75, true, 90,8 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 2.75, true, 90,8 );
         } else {
             //driveTrain.gyroStrafe(this, runtime, distanceSensor, .2, 1, false, 90,5 );
         }
@@ -95,16 +95,16 @@ public class TylerSkystoneBlue extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(500);
-        driveTrain.encoderStafe2(this,runtime, .75,6, true, 3);
+        driveTrain.encoderStafe(this,runtime, .75,6, true, 3);
         driveTrain.rotate(this, 80,.75);
         // driveTrain.encoderStafe(this,runtime, 0.5,27, true, 5);
         driveTrain.gyroDrive(this, runtime, 0.50, 11, 90, 8);
         foundation.down();
         sleep(500);
-        driveTrain.encoderDrive(this, runtime, -1, -32, 5);
+        driveTrain.gyroDrive(this, runtime, -1, -32, 0,5);
         // driveTrain.gyroDrive(this, runtime, -.80, 4, 90, 4);
         foundation.up();
-        driveTrain.encoderStafe2(this, runtime, 1, 65, DriveTrain.STRAFE_RIGHT, 10 );
+        driveTrain.encoderStafe(this, runtime, 1, 65, DriveTrain.STRAFE_RIGHT, 10 );
         sleep(1000000);
         //driveTrain.gyroDrive(this, runtime, 1, -55, 0, 6);
 

@@ -99,18 +99,18 @@ public class FoundationBlue extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.encoderDrive(this, runtime, 1.0, 25, 5);
-        driveTrain.encoderStafe(this, runtime, 0.5, 11, true, 5); //left
-        driveTrain.encoderDrive(this, runtime, 0.25, 7, 5);
+        driveTrain.gyroDrive(this, runtime, 1.0, 25, 0,5);
+        driveTrain.encoderStafe(this, runtime, 0.5, 11, DriveTrain.STRAFE_LEFT, 5); //left
+        driveTrain.gyroDrive(this, runtime, 0.25, 7, 0,5);
         foundation.down();
-        sleep(2000);
-        driveTrain.encoderDrive(this, runtime, -0.75, -29, 5);
-        driveTrain.rotate(this, 90, 0.5);
-        driveTrain.encoderDrive(this, runtime, -1, -13, 5);
+        sleep(500);
+        driveTrain.gyroDrive(this, runtime, -0.75, -29, 0,5);
+        driveTrain.rotate(this, 85, 0.75);
+        driveTrain.gyroDrive(this, runtime, 1, 13, 90,5);
         foundation.up();
-        sleep(1000);
-        driveTrain.encoderStafe(this, runtime, .5, 16, true, 5);
-        driveTrain.encoderDrive(this, runtime, -1, -37, 5);
+        sleep(500);
+        driveTrain.encoderStafe(this, runtime, .5, 16, DriveTrain.STRAFE_LEFT, 5);
+        driveTrain.gyroDrive(this, runtime, -1, -37, 90,5);
 
 
         telemetry.addData("Path", "Complete");

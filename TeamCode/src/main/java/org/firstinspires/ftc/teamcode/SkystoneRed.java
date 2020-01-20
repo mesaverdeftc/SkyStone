@@ -25,6 +25,7 @@ public class SkystoneRed extends LinearOpMode {
     private boolean positionOne = false;
     private boolean positionTwo = false;
     private boolean positionThree = false;
+    private int offset = 0;
 
     @Override
     public void runOpMode() {
@@ -76,6 +77,16 @@ public class SkystoneRed extends LinearOpMode {
                 driveTrain.gyroDrive(this, runtime, -0.20, -8, 0, 10);
                 positionThree = true;
             }
+        } else {
+            positionOne = true;
+        }
+
+        if(positionTwo == true) {
+            offset = 1;
+        } if(positionThree == true) {
+            offset = 2;
+        } else {
+            offset = 0;
         }
 
         block.down();
@@ -84,7 +95,7 @@ public class SkystoneRed extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(500);
-        driveTrain.gyroDrive(this, runtime, 1, 68, 0, 10);
+        driveTrain.gyroDrive(this, runtime, 1, 68 + (offset*8), 0, 10);
         block.down();
         sleep(750);
         grabber.up();
@@ -92,7 +103,7 @@ public class SkystoneRed extends LinearOpMode {
         block.up();
         sleep(500);
         driveTrain.encoderStafe(this,runtime, .75,4, false, 5);
-        driveTrain.gyroDrive(this, runtime, -1,-94,0,7);
+        driveTrain.gyroDrive(this, runtime, -1,-94 - (offset*8),0,7);
         sleep(200);
         double distance = distanceSensor.getDistance(DistanceUnit.INCH);
         if ((distance > 3) && (distance < 10)){
@@ -106,7 +117,7 @@ public class SkystoneRed extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(200);
-        driveTrain.gyroDrive(this, runtime, 1,103,0,7);
+        driveTrain.gyroDrive(this, runtime, 1,103 + (offset*8),0,7);
         block.down();
         sleep(500);
         grabber.up();

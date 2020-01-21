@@ -82,10 +82,10 @@ public class HudsonsTeleop extends OpMode
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
 
-        block.init(hardwareMap, "block_servo0", 1.0, -1.0);
-        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2",1.0, -1.0);
-        capstone.init(hardwareMap, "capstone_servo3", -1.0, 1.0);
-        grabber.init(hardwareMap, "grabber_servo4", -1.0, 1.0);
+        block.init(hardwareMap, "block_servo0", 0, 1.0);
+        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2",1.0, 0);
+        capstone.init(hardwareMap, "capstone_servo3", 0, 1.0);
+        grabber.init(hardwareMap, "grabber_servo4", 0, 1.0);
 
 
         // Most robots need the motor on one side to be reversed to drive forward

@@ -39,9 +39,9 @@ public class SkystoneRed extends LinearOpMode {
 
         colorDistance.init(hardwareMap, "block_color_2");
         distanceSensor = hardwareMap.get(com.qualcomm.robotcore.hardware.DistanceSensor.class, "distance_1");
-        block.init(hardwareMap, "block_servo0", -1.0, 1.0);
-        grabber.init(hardwareMap, "grabber_servo4", 1.0, -1.0);
-        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, -1.0);
+        block.init(hardwareMap, "block_servo0", 0, 1.0);
+        grabber.init(hardwareMap, "grabber_servo4", 1.0, 0);
+        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, 0);
         foundation.up();
         block.up();
         grabber.up();

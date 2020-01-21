@@ -185,64 +185,6 @@ public class DriveTrain {
         stop();
     }
 
-    /*
-    public void encoderDrive(LinearOpMode linearOpMode,
-                             ElapsedTime runtime,
-                             double speed,
-                             double inches,
-                             double timeoutS) {
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-        int newLeftRearTarget;
-        int newRightRearTarget;
-
-        // Ensure that the opmode is still active
-        if (linearOpMode.opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
-            newLeftRearTarget = leftRearDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
-            newRightRearTarget = rightRearDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
-
-            leftFrontDrive.setTargetPosition(newLeftFrontTarget);
-            rightFrontDrive.setTargetPosition(newRightFrontTarget);
-            leftRearDrive.setTargetPosition(newLeftRearTarget);
-            rightRearDrive.setTargetPosition(newRightRearTarget);
-
-            // Turn On RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            leftFrontDrive.setPower(Math.abs(speed));
-            rightFrontDrive.setPower(Math.abs(speed));
-            leftRearDrive.setPower(Math.abs(speed));
-            rightRearDrive.setPower(Math.abs(speed));
-
-            while (linearOpMode.opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftRearDrive.isBusy() && rightRearDrive.isBusy())) {
-            }
-
-            // Stop all motion;
-            stop();
-
-            // Turn off RUN_TO_POSITION
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
-    */
-
-
     public void encoderStafe(LinearOpMode linearOpMode,
                              ElapsedTime runtime,
                              double speed,
@@ -424,7 +366,7 @@ public class DriveTrain {
         }
     }
 
-    public void encoderDriveDistance(LinearOpMode linearOpMode,
+    public void gyroDriveBlockEdge(LinearOpMode linearOpMode,
                           ElapsedTime runtime,
                           DistanceSensor distanceSensor,
                           double speed,

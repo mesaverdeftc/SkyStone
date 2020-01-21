@@ -82,11 +82,9 @@ public class DriveTrain {
         imu.initialize(parameters);
     }
 
-    public void drive(double left_x, double left_y, double right_x, boolean fieldCentric) {
+    public void drive(double left_x, double left_y, double right_x, boolean fieldCentric, boolean slowmode) {
 
-        if (fieldCentric) {
-
-            // Logrithmic controls as described at https://www.arthuradmiraal.nl/programming/ftc-taking-your-code-to-the-next-level/
+        // Logrithmic controls as described at https://www.arthuradmiraal.nl/programming/ftc-taking-your-code-to-the-next-level/
             /*
 
             double x1, y1, x2;
@@ -103,8 +101,18 @@ public class DriveTrain {
             left_y = y1;
             right_x = x2;
 
-            */
+        */
 
+        // If our simulated manual transmission is in slowmode we divide the joystick values
+        // by 3 to simulate a slower gear ratio on the robot.
+        if(slowmode) {
+            left_y = left_y / 3;
+            left_x = left_x / 3;
+            right_x = right_x / 3;
+        }
+
+
+        if (fieldCentric) {
             // Field centric driving using a rotation transform https://en.wikipedia.org/wiki/Rotation_matrix
             double currentAngle = Math.toRadians(getHeading());
             double new_x = left_x * Math.cos(currentAngle) - left_y * Math.sin(currentAngle);
@@ -488,5 +496,56 @@ public class DriveTrain {
      */
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
+    }
+
+    public void encoderStrafeOffset(LinearOpMode linearOpMode,
+                             ElapsedTime runtime,
+                             double speed,
+                             double inches,
+                             boolean direction,
+                             double timeoutS) {
+        int newTargetPosition;
+        int scale;
+        double offset = speed/.5;
+
+        if (direction == STRAFE_LEFT)
+            scale = -1;
+        else
+            scale = 1;
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+            // Determine new target position
+            newTargetPosition = leftFrontDrive.getCurrentPosition() + (int) (scale * inches * COUNTS_PER_INCH);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            leftFrontDrive.setPower((scale * speed)+.32);
+            rightFrontDrive.setPower(scale * (-speed));
+            leftRearDrive.setPower(scale * (-speed));
+            rightRearDrive.setPower(scale * speed);
+
+            while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
+
+                if (direction == STRAFE_RIGHT) {
+                    if ((rightRearDrive.getCurrentPosition()) > newTargetPosition) {
+                        break;
+                    }
+                } else {
+                    if ((rightRearDrive.getCurrentPosition()) < newTargetPosition) {
+                        break;
+                    }
+                }
+            }
+
+            // Stop all motion;
+            stop();
+        }
     }
 }

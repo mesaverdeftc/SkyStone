@@ -154,15 +154,7 @@ public class Teleop extends OpMode
             driveTrain.resetAngle();
         }
 
-        // If our simulated manual transmission is in slowmode we divide the joystick values
-        // by 3 to simulate a slower gear ratio on the robot.
-        if (slowmode){
-            left_y = left_y / 3;
-            left_x = left_x / 3;
-            right_x = right_x / 3;
-        }
-
-        driveTrain.drive(left_x, left_y, right_x, fieldCentric);
+        driveTrain.drive(left_x, left_y, right_x, fieldCentric, slowmode);
 
         // Calculate the number of times this method (loop()) get called per second
         double currentTime = runtime.milliseconds();

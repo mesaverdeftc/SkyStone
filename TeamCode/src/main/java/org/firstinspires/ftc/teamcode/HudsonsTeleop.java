@@ -151,12 +151,8 @@ public class HudsonsTeleop extends OpMode
             slowmode = !slowmode;
         }
 
-        if(slowmode) {
-            left_y = left_y / 3;
-            left_x = left_x / 3;
-            right_x = right_x / 3;
-        }
-        driveTrain.drive(left_x,left_y, right_x, fieldCentric);
+
+        driveTrain.drive(left_x,left_y, right_x, fieldCentric, slowmode);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Values", "leftX = %.2f, leftY = %.2f", left_x, left_y);

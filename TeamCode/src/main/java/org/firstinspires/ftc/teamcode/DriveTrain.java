@@ -440,7 +440,7 @@ public class DriveTrain {
         return Range.clip(error * PCoeff, -1, 1);
     }
 
-    public void encoderStrafeOffset(LinearOpMode linearOpMode,
+    public void encoderStrafeOffsetUp(LinearOpMode linearOpMode,
                              ElapsedTime runtime,
                              double speed,
                              double inches,
@@ -470,6 +470,56 @@ public class DriveTrain {
 
             leftFrontDrive.setPower((scale * speed)+.32);
             rightFrontDrive.setPower(scale * (-speed));
+            leftRearDrive.setPower(scale * (-speed));
+            rightRearDrive.setPower(scale * speed);
+
+            while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
+
+                if (direction == STRAFE_RIGHT) {
+                    if ((rightRearDrive.getCurrentPosition()) > newTargetPosition) {
+                        break;
+                    }
+                } else {
+                    if ((rightRearDrive.getCurrentPosition()) < newTargetPosition) {
+                        break;
+                    }
+                }
+            }
+
+            // Stop all motion;
+            stop();
+        }
+    }
+    public void encoderStrafeOffsetDown(LinearOpMode linearOpMode,
+                                    ElapsedTime runtime,
+                                    double speed,
+                                    double inches,
+                                    boolean direction,
+                                    double timeoutS) {
+        int newTargetPosition;
+        int scale;
+        double offset = speed/.5;
+
+        if (direction == STRAFE_LEFT)
+            scale = -1;
+        else
+            scale = 1;
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+            // Determine new target position
+            newTargetPosition = leftFrontDrive.getCurrentPosition() + (int) (scale * inches * COUNTS_PER_INCH);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            leftFrontDrive.setPower(scale * speed);
+            rightFrontDrive.setPower((scale * (-speed)) - .32);
             leftRearDrive.setPower(scale * (-speed));
             rightRearDrive.setPower(scale * speed);
 

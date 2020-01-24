@@ -30,7 +30,7 @@ public class DriveTrain {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightRearDrive = null;
 
-    private static final double COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: ANDYMARK Motor Encoder
+    private static final double COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: ANDYMARK Motor Encoder
     private static final double DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     private static final double WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     private static final double COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -106,9 +106,9 @@ public class DriveTrain {
         // If our simulated manual transmission is in slowmode we divide the joystick values
         // by 3 to simulate a slower gear ratio on the robot.
         if(slowmode) {
-            left_y = left_y / 3;
-            left_x = left_x / 3;
-            right_x = right_x / 3;
+            left_y = left_y / 5;
+            left_x = left_x / 5;
+            right_x = right_x / 5;
         }
 
 

@@ -73,7 +73,7 @@ public class ParkAutoRight extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightRearDrive = null;
 
-    static final double COUNTS_PER_MOTOR_REV = 1120;    // eg: ANDYMARK Motor Encoder
+    static final double COUNTS_PER_MOTOR_REV = 537.6;    // eg: ANDYMARK Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /

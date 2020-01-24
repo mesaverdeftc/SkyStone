@@ -17,12 +17,18 @@ public class Foundation extends Attachment{
     @Override
     public void up() {
         servo.setPosition(upPosition);
-        servo2.setPosition(-upPosition);
+        servo2.setPosition(1.0 -upPosition);
     }
 
     @Override
     public void down() {
         servo.setPosition(downPosition);
-        servo2.setPosition(-downPosition);
+        servo2.setPosition(1.0 - downPosition);
+    }
+
+    @Override
+    public void setPosition(double position) {
+        servo.setPosition(position);
+        servo2.setPosition(1.0 - position);
     }
 }

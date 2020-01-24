@@ -73,7 +73,7 @@ public class FoundationRed extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, -1.0);
+        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, 0);
         foundation.up();
 
         driveTrain.init(hardwareMap);

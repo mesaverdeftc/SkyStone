@@ -107,9 +107,9 @@ public class DriveTrain {
         // If our simulated manual transmission is in slowmode we divide the joystick values
         // by 3 to simulate a slower gear ratio on the robot.
         if(slowmode) {
-            left_y = left_y / 5;
-            left_x = left_x / 5;
-            right_x = right_x / 5;
+            left_y = left_y / 3;
+            left_x = left_x / 3;
+            right_x = right_x / 3;
         }
 
 
@@ -245,6 +245,7 @@ public class DriveTrain {
                            double angle,
                            double timeoutS) {
 
+        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu);
         int scale;
 
         if (direction == STRAFE_LEFT)
@@ -263,25 +264,14 @@ public class DriveTrain {
         while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) &&
                 (distanceSensor.getDistance(DistanceUnit.INCH) > inches)) {
 
-            double P_DRIVE_COEFF = 0.06;     // Larger is more responsive, but also less stable
-            double error = getError(angle);
-            double steer = getSteer(error, P_DRIVE_COEFF);
+            // Larger is more responsive, but also less stable
 
-            double leftSpeed = speed - steer;
-            double rightSpeed = speed + steer;
+           MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
 
-            // Normalize speeds if either one exceeds +/- 1.0;
-            double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-            if (max > 1.0)
-            {
-                leftSpeed /= max;
-                rightSpeed /= max;
-            }
-
-            leftFrontDrive.setPower(scale*rightSpeed);
-            rightFrontDrive.setPower(scale*(-rightSpeed));
-            leftRearDrive.setPower(scale*(-leftSpeed));
-            rightRearDrive.setPower(scale*leftSpeed);
+            leftFrontDrive.setPower(scale*motorSpeed.getRightSpeed());
+            rightFrontDrive.setPower(scale*(-motorSpeed.getRightSpeed()));
+            leftRearDrive.setPower(scale*(-motorSpeed.getLeftSpeed()));
+            rightRearDrive.setPower(scale*motorSpeed.getLeftSpeed());
         }
 
         // Stop all motion;
@@ -295,6 +285,7 @@ public class DriveTrain {
                           double angle,
                           double timeoutS) {
 
+        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu);
         int newTargetPosition;
         int distanceRemaining;
         int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
@@ -324,7 +315,8 @@ public class DriveTrain {
             runtime.reset();
 
             while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
-
+                linearOpMode.telemetry.addData("Heading", "%.1f", getHeading());
+                linearOpMode.telemetry.update();
                 if (speed > 0) {
                     distanceRemaining = Range.clip(newTargetPosition - leftFrontDrive.getCurrentPosition(), 0, Integer.MAX_VALUE);
                 } else {
@@ -342,25 +334,13 @@ public class DriveTrain {
                     }
                 }
 
-                double P_DRIVE_COEFF = 0.06;     // Larger is more responsive, but also less stable
-                double error = getError(angle);
-                double steer = getSteer(error, P_DRIVE_COEFF);
+                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
 
-                double leftSpeed = newSpeed - steer;
-                double rightSpeed = newSpeed + steer;
 
-                // Normalize speeds if either one exceeds +/- 1.0;
-                double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                leftFrontDrive.setPower(leftSpeed);
-                rightFrontDrive.setPower(rightSpeed);
-                leftRearDrive.setPower(leftSpeed);
-                rightRearDrive.setPower(rightSpeed);
+                leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
+                rightFrontDrive.setPower(motorSpeed.getRightSpeed());
+                leftRearDrive.setPower(motorSpeed.getLeftSpeed());
+                rightRearDrive.setPower(motorSpeed.getRightSpeed());
             }
 
             stop();
@@ -375,6 +355,7 @@ public class DriveTrain {
                           double angle,
                           double timeoutS) {
 
+        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu);
         // Ensure that the opmode is still active
         if (linearOpMode.opModeIsActive()) {
 
@@ -392,25 +373,12 @@ public class DriveTrain {
                     break;
                 }
 
-                double P_DRIVE_COEFF = 0.06;     // Larger is more responsive, but also less stable
-                double error = getError(angle);
-                double steer = getSteer(error, P_DRIVE_COEFF);
+                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
 
-                double leftSpeed = speed - steer;
-                double rightSpeed = speed + steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                leftFrontDrive.setPower(leftSpeed);
-                rightFrontDrive.setPower(rightSpeed);
-                leftRearDrive.setPower(leftSpeed);
-                rightRearDrive.setPower(rightSpeed);
+                leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
+                rightFrontDrive.setPower(motorSpeed.getRightSpeed());
+                leftRearDrive.setPower(motorSpeed.getLeftSpeed());
+                rightRearDrive.setPower(motorSpeed.getRightSpeed());
             }
 
             stop();
@@ -418,28 +386,7 @@ public class DriveTrain {
     }
 
 
-    public double getError(double targetAngle) {
 
-        double robotError;
-
-        Orientation currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        // calculate error in -179 to +180 range  (
-        robotError = targetAngle - AngleUnit.DEGREES.normalize(currentAngles.firstAngle);
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
-    }
-
-    /**
-     * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @return
-     */
-    public double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
-    }
 
     public void encoderStrafeOffsetUp(LinearOpMode linearOpMode,
                              ElapsedTime runtime,

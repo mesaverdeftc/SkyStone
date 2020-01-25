@@ -61,14 +61,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="FoundationBlue", group="Linear Opmode")
+@Autonomous(name="FoundationRedLeft", group="Linear Opmode")
 //@Disabled
-public class FoundationBlue extends LinearOpMode {
+public class FoundationRedLeft extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private Foundation foundation = new Foundation();
     private DriveTrain driveTrain = new DriveTrain();
+    private Foundation foundation = new Foundation();
 
     @Override
     public void runOpMode() {
@@ -99,39 +99,25 @@ public class FoundationBlue extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.gyroDrive(this, runtime, 1.0, 25, 0,5);
-        driveTrain.encoderStafe(this, runtime, 0.5, 11, DriveTrain.STRAFE_LEFT, 5); //left
-        driveTrain.gyroDrive(this, runtime, 0.25, 7, 0,5);
+        driveTrain.gyroDrive(this, runtime, .25, 25, 0,5);
+        driveTrain.encoderStafe(this, runtime, .25, 11, DriveTrain.STRAFE_RIGHT, 5); //left
+        driveTrain.gyroDrive(this, runtime, .2, 7, 0,5);
         foundation.down();
         sleep(500);
-        driveTrain.gyroDrive(this, runtime, -0.75, -29, 0,5);
-        driveTrain.rotate(this, 85, 0.75);
-        driveTrain.gyroDrive(this, runtime, 1, 13, 90,5);
+        driveTrain.gyroDrive(this, runtime, -.2, -29, 0,5);
+        driveTrain.rotate(this, -85, -.2);
+        driveTrain.gyroDrive(this, runtime, .2, 13, -90,5);
         foundation.up();
         sleep(500);
-        driveTrain.encoderStafe(this, runtime, .5, 16, DriveTrain.STRAFE_LEFT, 5);
-        driveTrain.gyroDrive(this, runtime, -1, -37, 90,5);
+        driveTrain.encoderStafe(this, runtime, .25, 16, DriveTrain.STRAFE_RIGHT, 5);
+        driveTrain.gyroDrive(this, runtime, -.2, -37, -90,5);
 
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 
-}
-/*
-    encoderDrive(1.0,  25,  25, 5);
-    encoderStafe(0.5, 11,false,5);
-    encoderDrive(0.25,  7,  7, 5);
-        servoFoundation1.setPosition(-1.0);
-        servoFoundation2.setPosition(1.0);
-    sleep(2000);
-    encoderDrive2(-0.75, -29,-29,5);
-    rotate(-90, 0.5);
-    encoderDrive(0.75,  13,  13, 5);
-        servoFoundation1.setPosition(1.0);
-        servoFoundation2.setPosition(-1.0);
-    sleep(1000);
-    encoderStafe(.5, 14,false,5);
-    encoderDrive2(-0.75, -37,-37,7);
 
-*/
+
+
+}

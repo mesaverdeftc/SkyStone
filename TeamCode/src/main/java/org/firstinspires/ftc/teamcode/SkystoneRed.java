@@ -64,13 +64,13 @@ public class SkystoneRed extends LinearOpMode {
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 1.8, DriveTrain.STRAFE_LEFT, 0,10 );
         }
         driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,.3, 10, 0,5);
-        driveTrain.gyroDrive(this, runtime, -0.4, -5.5, 0, 10);
+        driveTrain.gyroDrive(this, runtime, -0.2, -5.5, 0, 10);
 
         if(colorDistance.isStone()) {
-            driveTrain.gyroDrive(this, runtime, -0.4, -8, 0, 10);
+            driveTrain.gyroDrive(this, runtime, -0.3, -8, 0, 10);
             offset = 1;
             if(colorDistance.isStone()) {
-                driveTrain.gyroDrive(this, runtime, -0.4, -8, 0, 10);
+                driveTrain.gyroDrive(this, runtime, -0.3, -8, 0, 10);
                 offset = 2;
 
             }

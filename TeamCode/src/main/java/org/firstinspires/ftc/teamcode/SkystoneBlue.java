@@ -63,14 +63,14 @@ public class SkystoneBlue extends LinearOpMode {
         if(!colorDistance.isStone()) {
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 1.8, DriveTrain.STRAFE_LEFT, 0,10 );
         }
-        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,-.3, 10, 0,5);
-        driveTrain.gyroDrive(this, runtime, 0.4, 5.5, 0, 10);
+        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,-.2, 10, 0,5);
+        driveTrain.gyroDrive(this, runtime, 0.2, 5.5, 0, 10);
 
         if(colorDistance.isStone()) {
-            driveTrain.gyroDrive(this, runtime, 0.4, 8, 0, 10);
+            driveTrain.gyroDrive(this, runtime, 0.3, 8, 0, 10);
             offset = 1;
             if(colorDistance.isStone()) {
-                driveTrain.gyroDrive(this, runtime, 0.4, 8, 0, 10);
+                driveTrain.gyroDrive(this, runtime, 0.3, 8, 0, 10);
                 offset = 2;
 
             }
@@ -89,7 +89,7 @@ public class SkystoneBlue extends LinearOpMode {
         sleep(200);
         block.up();
         sleep(200);
-        // driveTrain.encoderStafe(this,runtime, .75,.3, false, 5);
+        driveTrain.encoderStafe(this,runtime, .75,1.4, false, 5);
         driveTrain.gyroDrive(this, runtime, .4,94 +(offset*8.6),0,7);
         sleep(200);
 /*

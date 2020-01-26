@@ -294,7 +294,7 @@ public class DriveTrain {
         // GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
         int newTargetPosition;
         int distanceRemaining;
-        int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
+        // int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
         boolean direction;
         double newSpeed;
 
@@ -322,10 +322,10 @@ public class DriveTrain {
             // Determine new target position, and pass to motor controller
             newTargetPosition = leftFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
 
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             // reset the timeout time and start motion.
             runtime.reset();
@@ -339,9 +339,9 @@ public class DriveTrain {
                     distanceRemaining = Range.clip(leftFrontDrive.getCurrentPosition()- newTargetPosition, 0, Integer.MAX_VALUE);
                 }
 
-                if (distanceRemaining < stopDistance) {
-                    break;
-                }
+//                if (distanceRemaining < stopDistance) {
+  //                  break;
+    //            }
                 /*if (distanceRemaining < (6 * COUNTS_PER_INCH)) {
                     if (direction == DRIVE_FORWARD) {
                         newSpeed = 0.2;
@@ -354,19 +354,33 @@ public class DriveTrain {
 
                 // MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
                 double correction = pidDrive.performPID(getAngle());
+                // correction = correction -.1;
                 // correction = correction/600;
 
+                double lf, rf, lb, rb;
                 if(speed > 0) {
-                    leftFrontDrive.setPower(speed + correction);
-                    rightFrontDrive.setPower(speed + correction);
-                    leftRearDrive.setPower(speed - correction);
-                    rightRearDrive.setPower(speed - correction);
+                    lf = speed - correction;
+                    rf = speed + correction;
+                    lb = speed - correction;
+                    rb = speed + correction;
+                    leftFrontDrive.setPower(lf);
+                    rightFrontDrive.setPower(rf);
+                    leftRearDrive.setPower(lb);
+                    rightRearDrive.setPower(rb);
                 } else {
-                    leftFrontDrive.setPower(speed - correction);
-                    rightFrontDrive.setPower(speed - correction);
-                    leftRearDrive.setPower(speed + correction);
-                    rightRearDrive.setPower(speed + correction);
+                    lf = speed + correction;
+                    rf = speed - correction;
+                    lb = speed + correction;
+                    rb = speed - correction;
+                    leftFrontDrive.setPower(lf);
+                    rightFrontDrive.setPower(rf);
+                    leftRearDrive.setPower(lb);
+                    rightRearDrive.setPower(rb);
                 }
+                linearOpMode.telemetry.addData("lf", lf);
+                linearOpMode.telemetry.addData("rf", rf);
+                linearOpMode.telemetry.addData("lb", lb);
+                linearOpMode.telemetry.addData("rb", rb);
                 linearOpMode.telemetry.addData("Speed", speed);
                 linearOpMode.telemetry.addData("Correction", correction);
 

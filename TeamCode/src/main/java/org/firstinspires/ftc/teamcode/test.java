@@ -61,9 +61,8 @@ public class test extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroDrive(this, runtime, .4, 80, 0, 10);
+        driveTrain.gyroDrive(this, runtime, 1, 30, 0, 100);
         sleep(750);
-        driveTrain.gyroDrive(this, runtime, -.4, -80, 0, 10);
 
 
         telemetry.addData("Path", "Complete");

@@ -112,9 +112,9 @@ public class DriveTrain {
         // If our simulated manual transmission is in slowmode we divide the joystick values
         // by 3 to simulate a slower gear ratio on the robot.
         if(slowmode) {
-            left_y = left_y / 3;
-            left_x = left_x / 3;
-            right_x = right_x / 3;
+            left_y = left_y / 1.5;
+            left_x = left_x / 1.5;
+            right_x = right_x / 1.5;
         }
 
 
@@ -241,16 +241,16 @@ public class DriveTrain {
         }
     }
 
-    public void gyroStrafeToBlock(LinearOpMode linearOpMode,
-                           ElapsedTime runtime,
-                           DistanceSensor distanceSensor,
-                           double speed,
-                           double inches,
-                           boolean direction,
-                           double angle,
-                           double timeoutS) {
 
-        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
+    public void gyroStrafeToBlock(LinearOpMode linearOpMode,
+                                  ElapsedTime runtime,
+                                  DistanceSensor distanceSensor,
+                                  double speed,
+                                  double inches,
+                                  boolean direction,
+                                  double angle,
+                                  double timeoutS) {
+
         int scale;
 
         if (direction == STRAFE_LEFT)
@@ -270,13 +270,17 @@ public class DriveTrain {
                 (distanceSensor.getDistance(DistanceUnit.INCH) > inches)) {
 
             // Larger is more responsive, but also less stable
-
-           MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
-
-            leftFrontDrive.setPower(scale*motorSpeed.getRightSpeed());
-            rightFrontDrive.setPower(scale*(-motorSpeed.getRightSpeed()));
-            leftRearDrive.setPower(scale*(-motorSpeed.getLeftSpeed()));
-            rightRearDrive.setPower(scale*motorSpeed.getLeftSpeed());
+        if(direction == STRAFE_LEFT) {
+            leftFrontDrive.setPower(-speed);
+            rightFrontDrive.setPower(speed);
+            leftRearDrive.setPower(speed);
+            rightRearDrive.setPower(-speed);
+        } else {
+            leftFrontDrive.setPower(speed);
+            rightFrontDrive.setPower(-speed);
+            leftRearDrive.setPower(-speed);
+            rightRearDrive.setPower(speed);
+            }
         }
 
         // Stop all motion;
@@ -322,10 +326,10 @@ public class DriveTrain {
             // Determine new target position, and pass to motor controller
             newTargetPosition = leftFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
 
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            leftRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             // reset the timeout time and start motion.
             runtime.reset();
@@ -358,25 +362,16 @@ public class DriveTrain {
                 // correction = correction/600;
 
                 double lf, rf, lb, rb;
-                if(speed > 0) {
-                    lf = speed - correction;
-                    rf = speed + correction;
-                    lb = speed - correction;
-                    rb = speed + correction;
-                    leftFrontDrive.setPower(lf);
-                    rightFrontDrive.setPower(rf);
-                    leftRearDrive.setPower(lb);
-                    rightRearDrive.setPower(rb);
-                } else {
-                    lf = speed + correction;
-                    rf = speed - correction;
-                    lb = speed + correction;
-                    rb = speed - correction;
-                    leftFrontDrive.setPower(lf);
-                    rightFrontDrive.setPower(rf);
-                    leftRearDrive.setPower(lb);
-                    rightRearDrive.setPower(rb);
-                }
+
+                lf = speed - correction;
+                rf = speed + correction;
+                lb = speed - correction;
+                rb = speed + correction;
+                leftFrontDrive.setPower(lf);
+                rightFrontDrive.setPower(rf);
+                leftRearDrive.setPower(lb);
+                rightRearDrive.setPower(rb);
+
                 linearOpMode.telemetry.addData("lf", lf);
                 linearOpMode.telemetry.addData("rf", rf);
                 linearOpMode.telemetry.addData("lb", lb);

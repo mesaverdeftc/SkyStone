@@ -61,7 +61,9 @@ public class test extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroDrive(this, runtime, 1, 30, 0, 100);
+        driveTrain.gyroDrive(this, runtime, .5, 30, 0, 100);
+        //driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .5, 2, DriveTrain.STRAFE_RIGHT, 0,90 );
+        //driveTrain.gyroStrafeToBlock(this,runtime,distanceSensor,.5,4,driveTrain.STRAFE_LEFT, 90,10);
         sleep(750);
 
 

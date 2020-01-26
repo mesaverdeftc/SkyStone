@@ -26,6 +26,7 @@ public class test extends LinearOpMode {
     private boolean positionTwo = false;
     private boolean positionThree = false;
     private int offset = 0;
+    PIDController pidDrive;
 
     @Override
     public void runOpMode() {
@@ -45,6 +46,7 @@ public class test extends LinearOpMode {
         block.up();
         grabber.up();
 
+
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !driveTrain.imu.isGyroCalibrated())
         {
@@ -59,7 +61,10 @@ public class test extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroDrive(this, runtime, .6, 80, 0, 10);
+        driveTrain.gyroDrive(this, runtime, .5, 30, 0, 100);
+        //driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .5, 2, DriveTrain.STRAFE_RIGHT, 0,90 );
+        //driveTrain.gyroStrafeToBlock(this,runtime,distanceSensor,.5,4,driveTrain.STRAFE_LEFT, 90,10);
+        sleep(750);
 
 
         telemetry.addData("Path", "Complete");

@@ -64,7 +64,7 @@ public class SkystoneBlue extends LinearOpMode {
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 1.4, DriveTrain.STRAFE_LEFT, 0,10 );
         }
         driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,-.2, 10, 0,5);
-        driveTrain.gyroDrive(this, runtime, 0.2, 5.5, 0, 10);
+        driveTrain.gyroDrive(this, runtime, 0.1, 5.5, 0, 10);
 
         if(colorDistance.isStone()) {
             driveTrain.gyroDrive(this, runtime, 0.1, 8, 0, 10);
@@ -81,8 +81,9 @@ public class SkystoneBlue extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(500);
+        driveTrain.encoderStafe(this,runtime, .5,5.4, false, 3);
         driveTrain.gyroDrive(this, runtime, -.3, -72 - (offset*8.8), 0, 10);
-
+        driveTrain.encoderStafe(this,runtime, -.5,-4, false, 3);
         block.down();
         sleep(750);
         grabber.up();
@@ -90,7 +91,9 @@ public class SkystoneBlue extends LinearOpMode {
         block.up();
         sleep(200);
         driveTrain.encoderStafe(this,runtime, .75,3, false, 5);
-        driveTrain.gyroDrive(this, runtime, .4,36 +(offset*8.6),0,7);
+        //driveTrain.gyroDrive(this, runtime, .4,70 +(offset*8.8),0,7);
+        sleep(200);
+        /*driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
         sleep(2000);
 /*
         sleep(200);
@@ -117,16 +120,18 @@ public class SkystoneBlue extends LinearOpMode {
         sleep(500);
 
         // driveTrain.gyroDrive(this, runtime, -1,-45,0,7);
+*/
 
-
-        driveTrain.encoderStafe(this,runtime, .5,6, driveTrain.STRAFE_LEFT, 3);
-        driveTrain.rotate(this, 90,.4);
-        driveTrain.gyroDrive(this, runtime, 0.4, 11, 90, 8);
+        //driveTrain.encoderStafe(this,runtime, .2,6, false, 3);
+        driveTrain.rotate(this, 85,.4);
+        driveTrain.gyroDrive(this, runtime, 0.4, 20, 90, 8);
         foundation.down();
         sleep(500);
-        driveTrain.gyroDrive(this, runtime, -.4, -41.3, 90, 8);
+        //driveTrain.rotate(this, -90,.4);
+        driveTrain.gyroDrive(this, runtime, .4, -41.3, 90, 8);
         foundation.up();
-        driveTrain.encoderStrafeOffsetDown(this, runtime, .4, 37, DriveTrain.STRAFE_RIGHT, 10);
+        //driveTrain.gyroDrive(this, runtime, -.4, -41.3, 180, 8);
+        driveTrain.encoderStrafeOffsetDown(this, runtime, .3, 37, DriveTrain.STRAFE_RIGHT, 10);
         /*
         driveTrain.gyroDrive(this, runtime, -1,-25,90,7);
         driveTrain.rotate(this,0,.75);

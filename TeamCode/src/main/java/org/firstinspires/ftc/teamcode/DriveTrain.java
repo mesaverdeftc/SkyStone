@@ -298,10 +298,13 @@ public class DriveTrain {
         boolean direction;
         double newSpeed;
 
-        pidDrive = new PIDController(0.04, 0,0);
-        pidDrive.setSetpoint(0);
-        pidDrive.setOutputRange(0, 0.5);
+        pidDrive = new PIDController(0.05, 0,0);
+
+        pidDrive.reset();
+        pidDrive.setSetpoint(angle);
+        pidDrive.setOutputRange(0, speed);
         pidDrive.setInputRange(-90, 90);
+        pidDrive.setTolerance(1);
         pidDrive.enable();
 
 
@@ -353,11 +356,17 @@ public class DriveTrain {
                 double correction = pidDrive.performPID(getAngle());
                 // correction = correction/600;
 
-                leftFrontDrive.setPower(speed - correction);
-                rightFrontDrive.setPower(speed + correction);
-                leftRearDrive.setPower(speed - correction);
-                rightRearDrive.setPower(speed + correction);
-
+                if(speed > 0) {
+                    leftFrontDrive.setPower(speed + correction);
+                    rightFrontDrive.setPower(speed + correction);
+                    leftRearDrive.setPower(speed - correction);
+                    rightRearDrive.setPower(speed - correction);
+                } else {
+                    leftFrontDrive.setPower(speed - correction);
+                    rightFrontDrive.setPower(speed - correction);
+                    leftRearDrive.setPower(speed + correction);
+                    rightRearDrive.setPower(speed + correction);
+                }
                 linearOpMode.telemetry.addData("Speed", speed);
                 linearOpMode.telemetry.addData("Correction", correction);
 
@@ -508,12 +517,20 @@ public class DriveTrain {
             stop();
         }
     }
+
+    /**
+     *
+     * Get current cumulative angle rotation from last reset.
+     * @return Angle in degrees. + = left, - = right.
+     *
+     */
     private double getAngle()
     {
-        // We experimentally determined the Z axis is the axis we want to use for heading angle.
-        // We have to process the angle because the imu works in euler angles so the Z axis is
-        // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
-        // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        //  We experimentally determined the Z axis is the axis we want to use for heading angle.
+        //  We have to process the angle because the imu works in euler angles so the Z axis is
+        //  returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        //  180 degrees. We detect this transition and track the total cumulative angle of rotation.
 
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -532,5 +549,35 @@ public class DriveTrain {
 
         return globalAngle;
     }
+    /**
+     *
+     * Get current cumulative angle rotation from last reset.
+     * @return Angle in degrees. + = left, - = right.
+     *
+     */
+    private double getAngleOriginal()
+    {
+
+        //  We experimentally determined the Z axis is the axis we want to use for heading angle.
+        //  We have to process the angle because the imu works in euler angles so the Z axis is
+        //  returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
+        //  180 degrees. We detect this transition and track the total cumulative angle of rotation.
+
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles;
+
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles.firstAngle;
+
+        return globalAngle;
+    }
+
 
 }

@@ -100,7 +100,7 @@ public class FoundationRedLeft extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         driveTrain.gyroDrive(this, runtime, .25, 25, 0,5);
-        driveTrain.encoderStafe(this, runtime, .25, 11, DriveTrain.STRAFE_RIGHT, 5); //left
+        driveTrain.encoderStafe(this, runtime,.25, 11, DriveTrain.STRAFE_RIGHT, 5); //left
         driveTrain.gyroDrive(this, runtime, .2, 7, 0,5);
         foundation.down();
         sleep(500);

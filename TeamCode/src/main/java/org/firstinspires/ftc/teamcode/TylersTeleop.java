@@ -29,19 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 /**
@@ -58,42 +51,33 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Tyler's Teleop", group="Iterative Opmode")
-@Disabled
+@TeleOp(name="Tyler's", group="Iterative Opmode")
+//@Disabled
 public class TylersTeleop extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftRearDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightRearDrive = null;
-    private Servo servoBlock = null;
-    private Servo servoGraber = null;
-    private Servo servoFoundation1 = null;
-    private Servo servoFoundation2 = null;
-    private Servo servoCapstone = null;
+    private DriveTrain driveTrain = new DriveTrain();
+    private Attachment block = new Attachment();
+    private Attachment grabber = new Attachment();
+    private Foundation foundation = new Foundation();
+    private Attachment capstone = new Attachment();
+    private ColorDistance colorDistance = new ColorDistance();
+    private DistanceSensor distanceSensor = null;
+
+    private ButtonToggle buttonY = new ButtonToggle();
+    private ButtonToggle buttonA = new ButtonToggle();
+    private ButtonToggle buttonB = new ButtonToggle();
+    private ButtonToggle button_rb = new ButtonToggle();
+    private ButtonToggle button_lb = new ButtonToggle();
+    private ButtonToggle button_dpad_down = new ButtonToggle();
+
+    private boolean slowmode = false;
+    private boolean fieldCentric = false;
+
     private double previousTime = 0.0;
     private double loopsPerSecond = 0.0;
     private double loops = 0.0;
-
-    private int iterations0 = 1;
-    private int iterations1 = 1;
-    private int iterations2 = 1;
-    private boolean active0 = false;
-    private boolean active1 = false;
-    private boolean active2 = false;
-
-    private boolean button_rb_IsActive = false;
-    private boolean slowmode = false;
-
-    private boolean button_x_IsActive = false;
-    private boolean graberClosed = false;
-
-
-    // The IMU sensor object
-    BNO055IMU imu;
-    Orientation angles;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -101,50 +85,17 @@ public class TylersTeleop extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initializing");
+        telemetry.update();
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        leftRearDrive  = hardwareMap.get(DcMotor.class, "left_rear_drive");
-        rightRearDrive = hardwareMap.get(DcMotor.class, "right_rear_drive");
-
-        servoBlock = hardwareMap.get(Servo.class, "block_servo0");
-        servoGraber = hardwareMap.get(Servo.class, "grabber_servo4");
-        servoFoundation1 = hardwareMap.get(Servo.class, "foundation_servo1");
-        servoFoundation2 = hardwareMap.get(Servo.class, "foundation_servo2");
-        servoCapstone = hardwareMap.get(Servo.class, "capstone_servo3");
-
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightRearDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = false;
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        driveTrain.init(hardwareMap);
+        block.init(hardwareMap, "block_servo0", 0, 1.0);
+        grabber.init(hardwareMap, "grabber_servo4", 1.0, 0);
+        foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2", 1.0, -1.0);
+        capstone.init(hardwareMap, "capstone_servo3", 1.0, 0);
+        colorDistance.init(hardwareMap, "block_color_2");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distance_1");
 
         // Tell the driver that initialization is complete.
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         telemetry.addData("Status", "Initialized");
         telemetry.update();
     }
@@ -169,123 +120,41 @@ public class TylersTeleop extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftFrontPower;
-        double rightFrontPower;
-        double leftRearPower;
-        double rightRearPower;
-
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
 
         double left_x = gamepad1.left_stick_x;
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
-        boolean button_rb = gamepad1.right_bumper;
 
-        boolean button_y = gamepad2.y;
-        boolean button_x = gamepad2.x;
-        boolean button_b = gamepad2.b;
-        boolean button_dpad_down = gamepad2.dpad_down;
+        // Check is we need to toggle the block attachment's position
+        if (buttonY.toggled(gamepad2.y))
+            block.toggle(buttonY.toggleState);
 
-        // button Y on controller 2 controls the block grabber attachment servo
-        if(button_y && !active0) {
-            active0 = true;
-            if (iterations0 % 2 == 0) {
-                servoBlock.setPosition(-1.0);
-                iterations0++;
-            } else {
-                servoBlock.setPosition(1.0);
-                iterations0++;
-            }
-        }
-        else if (!button_y) {
-            active0 = false;
-        }
+        // Check is we need to toggle the grabber attachment's position
+        if (buttonA.toggled(gamepad2.a))
+            grabber.toggle(buttonA.toggleState);
 
-        if(button_x && !button_x_IsActive) {
-            button_x_IsActive = true;
-            if (graberClosed) {
-                servoGraber.setPosition(-1.0);
-                graberClosed = false;
-            } else {
-                servoGraber.setPosition(1.0);
-                graberClosed = true;
-            }
+        // Check is we need to toggle the foundation attachment's position
+        if (buttonB.toggled(gamepad2.b))
+            foundation.toggle(buttonB.toggleState);
 
-        }
-        else if (!button_x) {
-            button_x_IsActive = false;
-        }
-
-        // button B on controller 2 controls the foundation grabber servos
-        if(button_b && !active1) {
-            active1 = true;
-            if (iterations1 % 2 == 0) {
-                servoFoundation1.setPosition(-1.0);
-                servoFoundation2.setPosition(1.0);
-                iterations1++;
-            } else {
-                servoFoundation1.setPosition(1.0);
-                servoFoundation2.setPosition(-1.0);
-                iterations1++;
-            }
-
-        }
-        else if (!button_b) {
-            active1 = false;
-        }
-
-        // dpad down button on controller 2 controls dropping the capstone
-        if(button_dpad_down && !active2) {
-            active2 = true;
-            if (iterations2 % 2 == 0) {
-                servoCapstone.setPosition(1.0);
-                iterations2++;
-            } else {
-                servoCapstone.setPosition(-1.0);
-                iterations2++;
-            }
-
-        }
-        else if (!button_dpad_down) {
-            active2 = false;
-        }
+        // Check is we need to toggle the capstone attachment's position
+        if (button_dpad_down.toggled(gamepad2.dpad_down))
+            capstone.toggle(button_dpad_down.toggleState);
 
         // The right bumper button toggles slowmode.  This simulates a manual transmission.
-        if (button_rb && !button_rb_IsActive){
-            button_rb_IsActive = true;
+        if (button_rb.toggled(gamepad1.right_bumper))
             slowmode = !slowmode;
-        }
-        else if (!button_rb) {
-            button_rb_IsActive = false;
-        }
 
-        // If our simulated manual transmission is in slowmode we divide the joystick values
-        // by 3 to simulate a slower gear ratio on the robot.
-        if (slowmode){
-            left_y = left_y / 3;
-            left_x = left_x / 3;
-            right_x = right_x / 3;
+        // The left bumper button toggles robot centric and field centric driving.
+        if (button_lb.toggled(gamepad1.left_bumper))
+            fieldCentric = !fieldCentric;
+
+        // The dpad_up button resets the field centric 0 angle
+        if(gamepad1.dpad_up) {
+            driveTrain.resetAngle();
         }
 
-        // left_y controls forward and backward power
-        // left_x controls the strafing power
-        // right_x is turning the robot
-        // Combining the values together makes the robot go in any direction and rotate.
-        leftFrontPower   = Range.clip(left_y + right_x + left_x, -1.0, 1.0) ;
-        rightFrontPower  = Range.clip(left_y - right_x - left_x, -1.0, 1.0) ;
-        leftRearPower    = Range.clip(left_y + right_x - left_x, -1.0, 1.0) ;
-        rightRearPower   = Range.clip(left_y - right_x + left_x, -1.0, 1.0) ;
-
-        // Send calculated power to wheels
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftRearDrive.setPower(leftRearPower);
-        rightRearDrive.setPower(rightRearPower);
+        driveTrain.drive(left_x, left_y, right_x, fieldCentric, slowmode);
 
         // Calculate the number of times this method (loop()) get called per second
         double currentTime = runtime.milliseconds();
@@ -296,13 +165,13 @@ public class TylersTeleop extends OpMode
             loops = 0;
         }
 
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)", leftFrontPower, rightFrontPower, leftRearPower, rightRearPower);
-        telemetry.addData("Heading", "%.1f", AngleUnit.DEGREES.normalize(angles.firstAngle));
         telemetry.addData("Loop per Seconds", "%.2f lps", loopsPerSecond);
+        //telemetry.addData("Heading", "%.1f", driveTrain.getHeading());
+        //telemetry.addData("Stick Values", "leftX = %.2f, leftY = %.2f", left_x, left_y);
+        telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)",
+                driveTrain.leftFrontPower, driveTrain.rightFrontPower, driveTrain.leftRearPower, driveTrain.rightRearPower);
     }
 
     /*
@@ -310,5 +179,6 @@ public class TylersTeleop extends OpMode
      */
     @Override
     public void stop() {
+        driveTrain.stop();
     }
 }

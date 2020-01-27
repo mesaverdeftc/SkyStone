@@ -49,6 +49,6 @@ public class ColorDistance {
 
         double calculation = (r * g)/ (b *b);
 
-        return calculation > 2;
+        return calculation > 3;
     }
 }

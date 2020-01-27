@@ -38,7 +38,7 @@ public class DriveTrain {
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     BNO055IMU imu;
-    PIDController pidDrive;
+    //PIDController pidDrive;
 
     double globalAngle = 0;
     double lastAngles = 0;
@@ -60,10 +60,10 @@ public class DriveTrain {
         leftRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftRearDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightRearDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // Brake when power is set to zero (no coasting)
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -91,7 +91,7 @@ public class DriveTrain {
     public void drive(double left_x, double left_y, double right_x, boolean fieldCentric, boolean slowmode) {
 
         // Logrithmic controls as described at https://www.arthuradmiraal.nl/programming/ftc-taking-your-code-to-the-next-level/
-            /*
+        /*
 
             double x1, y1, x2;
             x1 = left_x * left_x * Math.signum(left_x);
@@ -112,9 +112,9 @@ public class DriveTrain {
         // If our simulated manual transmission is in slowmode we divide the joystick values
         // by 3 to simulate a slower gear ratio on the robot.
         if(slowmode) {
-            left_y = left_y / 1.5;
-            left_x = left_x / 1.5;
-            right_x = right_x / 1.5;
+            left_y = left_y / 3.0;
+            left_x = left_x / 3.0;
+            right_x = right_x / 3.0;
         }
 
 
@@ -251,12 +251,7 @@ public class DriveTrain {
                                   double angle,
                                   double timeoutS) {
 
-        int scale;
-
-        if (direction == STRAFE_LEFT)
-            scale = -1;
-        else
-            scale = 1;
+        //GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -266,20 +261,27 @@ public class DriveTrain {
         // reset the timeout time and start motion.
         runtime.reset();
 
-        while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS) &&
-                (distanceSensor.getDistance(DistanceUnit.INCH) > inches)) {
+        while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
+
+            double distanceRemaining = distanceSensor.getDistance(DistanceUnit.INCH);
+
+            if (distanceRemaining < inches) break;
+
+            //MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
+            //double leftSpeed = motorSpeed.getLeftSpeed();
+            //double rightSpeed = motorSpeed.getRightSpeed();
 
             // Larger is more responsive, but also less stable
-        if(direction == STRAFE_LEFT) {
-            leftFrontDrive.setPower(-speed);
-            rightFrontDrive.setPower(speed);
-            leftRearDrive.setPower(speed);
-            rightRearDrive.setPower(-speed);
-        } else {
-            leftFrontDrive.setPower(speed);
-            rightFrontDrive.setPower(-speed);
-            leftRearDrive.setPower(-speed);
-            rightRearDrive.setPower(speed);
+            if(direction == STRAFE_LEFT) {
+                leftFrontDrive.setPower(-speed);
+                rightFrontDrive.setPower(speed);
+                leftRearDrive.setPower(speed);
+                rightRearDrive.setPower(-speed);
+            } else {
+                leftFrontDrive.setPower(speed);
+                rightFrontDrive.setPower(-speed);
+                leftRearDrive.setPower(-speed);
+                rightRearDrive.setPower(speed);
             }
         }
 
@@ -295,22 +297,12 @@ public class DriveTrain {
                           double timeoutS) {
 
 
-        // GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
+        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
         int newTargetPosition;
         int distanceRemaining;
-        // int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
+        int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
         boolean direction;
         double newSpeed;
-
-        pidDrive = new PIDController(0.05, 0,0);
-
-        pidDrive.reset();
-        pidDrive.setSetpoint(angle);
-        pidDrive.setOutputRange(0, speed);
-        pidDrive.setInputRange(-90, 90);
-        pidDrive.setTolerance(1);
-        pidDrive.enable();
-
 
         if (inches > 0) {
             direction = DRIVE_FORWARD;
@@ -335,18 +327,16 @@ public class DriveTrain {
             runtime.reset();
 
             while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
-                linearOpMode.telemetry.addData("Heading", "%.1f", getAngle());
-                linearOpMode.telemetry.update();
                 if (speed > 0) {
                     distanceRemaining = Range.clip(newTargetPosition - leftFrontDrive.getCurrentPosition(), 0, Integer.MAX_VALUE);
                 } else {
                     distanceRemaining = Range.clip(leftFrontDrive.getCurrentPosition()- newTargetPosition, 0, Integer.MAX_VALUE);
                 }
 
-//                if (distanceRemaining < stopDistance) {
-  //                  break;
-    //            }
-                /*if (distanceRemaining < (6 * COUNTS_PER_INCH)) {
+                if (distanceRemaining < stopDistance) {
+                    break;
+                }
+                if (distanceRemaining < (6 * COUNTS_PER_INCH)) {
                     if (direction == DRIVE_FORWARD) {
                         newSpeed = 0.2;
                     } else {
@@ -354,31 +344,12 @@ public class DriveTrain {
                     }
                 }
 
-                 */
+                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
 
-                // MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
-                double correction = pidDrive.performPID(getAngle());
-                // correction = correction -.1;
-                // correction = correction/600;
-
-                double lf, rf, lb, rb;
-
-                lf = speed - correction;
-                rf = speed + correction;
-                lb = speed - correction;
-                rb = speed + correction;
-                leftFrontDrive.setPower(lf);
-                rightFrontDrive.setPower(rf);
-                leftRearDrive.setPower(lb);
-                rightRearDrive.setPower(rb);
-
-                linearOpMode.telemetry.addData("lf", lf);
-                linearOpMode.telemetry.addData("rf", rf);
-                linearOpMode.telemetry.addData("lb", lb);
-                linearOpMode.telemetry.addData("rb", rb);
-                linearOpMode.telemetry.addData("Speed", speed);
-                linearOpMode.telemetry.addData("Correction", correction);
-
+                leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
+                rightFrontDrive.setPower(motorSpeed.getRightSpeed());
+                leftRearDrive.setPower(motorSpeed.getLeftSpeed());
+                rightRearDrive.setPower(motorSpeed.getRightSpeed());
             }
 
             stop();
@@ -422,9 +393,6 @@ public class DriveTrain {
             stop();
         }
     }
-
-
-
 
     public void encoderStrafeOffsetUp(LinearOpMode linearOpMode,
                              ElapsedTime runtime,
@@ -527,13 +495,7 @@ public class DriveTrain {
         }
     }
 
-    /**
-     *
-     * Get current cumulative angle rotation from last reset.
-     * @return Angle in degrees. + = left, - = right.
-     *
-     */
-    private double getAngle()
+/*    private double getAngle()
     {
 
         //  We experimentally determined the Z axis is the axis we want to use for heading angle.
@@ -558,12 +520,7 @@ public class DriveTrain {
 
         return globalAngle;
     }
-    /**
-     *
-     * Get current cumulative angle rotation from last reset.
-     * @return Angle in degrees. + = left, - = right.
-     *
-     */
+
     private double getAngleOriginal()
     {
 
@@ -587,6 +544,5 @@ public class DriveTrain {
 
         return globalAngle;
     }
-
-
+*/
 }

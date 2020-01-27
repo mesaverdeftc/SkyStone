@@ -56,11 +56,11 @@ public class HudsonsTeleop extends OpMode
     private ElapsedTime runtime = new ElapsedTime();
     private DriveTrain driveTrain = new DriveTrain();
 
-/*    private Attachment block = new Attachment();
+    private Attachment block = new Attachment();
     private Attachment grabber = new Attachment();
     private Foundation foundation = new Foundation();
     private Attachment capstone = new Attachment();
-*/
+
     private ButtonToggle buttonY = new ButtonToggle();
     private ButtonToggle buttonA = new ButtonToggle();
     private ButtonToggle buttonB = new ButtonToggle();
@@ -71,10 +71,6 @@ public class HudsonsTeleop extends OpMode
     private boolean slowmode = false;
     private boolean fieldCentric = false;
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
-
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -82,26 +78,15 @@ public class HudsonsTeleop extends OpMode
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
 
-     /*   block.init(hardwareMap, "block_servo0", 0, 1.0);
+        block.init(hardwareMap, "block_servo0", 0, 1.0);
         foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2",1.0, 0);
         capstone.init(hardwareMap, "capstone_servo3", 0, 1.0);
         grabber.init(hardwareMap, "grabber_servo4", 0, 1.0);
-*/
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-
-
-
-        // Tell the driver that initialization is complete and check gyro calibration
         driveTrain.init(hardwareMap);
         telemetry.addData("Status", "Initialized");
-        // telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
     @Override
     public void init_loop() {
     }
@@ -125,7 +110,6 @@ public class HudsonsTeleop extends OpMode
             block.toggle(buttonY.toggleState);
         }*/
 
-        /*
         block.setPosition(gamepad2.left_stick_y);
 
         if(buttonA.toggled(gamepad2.a)) {
@@ -139,7 +123,7 @@ public class HudsonsTeleop extends OpMode
         if(button_dpad_down.toggled(gamepad2.dpad_down)) {
             capstone.toggle(button_dpad_down.toggleState);
         }
-*/
+
         if(gamepad1.dpad_up) {
             driveTrain.resetAngle();
         }
@@ -162,10 +146,6 @@ public class HudsonsTeleop extends OpMode
                 driveTrain.leftFrontPower, driveTrain.rightFrontPower, driveTrain.leftRearPower, driveTrain.rightRearPower);
         telemetry.addData("Heading", "%.1f", driveTrain.getHeading());
     }
-
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
 
     @Override
     public void stop() {}

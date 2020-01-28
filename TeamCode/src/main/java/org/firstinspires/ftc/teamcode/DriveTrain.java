@@ -55,10 +55,10 @@ public class DriveTrain {
         leftRearDrive  = hardwareMap.get(DcMotor.class, "left_rear_drive");
         rightRearDrive = hardwareMap.get(DcMotor.class, "right_rear_drive");
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);

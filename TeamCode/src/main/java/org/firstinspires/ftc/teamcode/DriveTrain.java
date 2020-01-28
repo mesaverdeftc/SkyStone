@@ -303,6 +303,8 @@ public class DriveTrain {
         int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
         boolean direction;
         double newSpeed;
+        int count = 0;
+        int count1 = 0;
 
         if (inches > 0) {
             direction = DRIVE_FORWARD;
@@ -336,15 +338,29 @@ public class DriveTrain {
                 if (distanceRemaining < stopDistance) {
                     break;
                 }
-                if (distanceRemaining < (6 * COUNTS_PER_INCH)) {
+                if (distanceRemaining < (10 * COUNTS_PER_INCH)) {
                     if (direction == DRIVE_FORWARD) {
-                        newSpeed = 0.2;
+                        newSpeed = speed - (count1 * .2);
+                        newSpeed = Range.clip(newSpeed, .1, speed);
                     } else {
-                        newSpeed = -0.2;
+                        newSpeed = speed + (count1 * .2);
+                        newSpeed = Range.clip(newSpeed, speed, -.1);
                     }
+                    count1++;
                 }
 
-                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
+                if(count < 10) {
+                    if(inches > 0) {
+                        newSpeed = count * .1;
+                        newSpeed = Range.clip(newSpeed, 0, speed);
+                    } else {
+                        newSpeed = count * -.1;
+                        newSpeed = Range.clip(newSpeed, speed, 0);
+                    }
+                    count++;
+                }
+
+                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(newSpeed, angle);
 
                 leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
                 rightFrontDrive.setPower(motorSpeed.getRightSpeed());

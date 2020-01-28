@@ -38,9 +38,10 @@ public class TestMotors extends LinearOpMode{
         waitForStart();
 
         sleep(1000);
-        driveTrain.gyroDrive(this, runtime, 0.7, 100, 0, 30);
+        driveTrain.gyroDrive(this, runtime, .6, 48, 0, 30);
+        sleep(5000);
+        driveTrain.gyroDrive(this, runtime, -.6, -48, 0, 30);
         sleep(1000);
-        driveTrain.gyroDrive(this, runtime, -0.7, -100, 0, 30);
         telemetry.addData("Path", "Complete");
         telemetry.update();
 

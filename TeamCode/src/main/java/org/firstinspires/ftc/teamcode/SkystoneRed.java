@@ -58,19 +58,19 @@ public class SkystoneRed extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .5, 10, DriveTrain.STRAFE_LEFT, 0,20 );
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .15, 2.0, DriveTrain.STRAFE_LEFT, 0,16 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .7, 12, 0,20 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.75, 0,16 );
         if(!colorDistance.isStone()) {
-            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .15, 1.2, DriveTrain.STRAFE_LEFT, 0,10 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 1.4, 0,10 );
         }
-        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,.2, 10, 0,5);
-        driveTrain.gyroDrive(this, runtime, -0.1, -5.5, 0, 10);
+        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,.3, 10, 0,5);
+        driveTrain.gyroDrive(this, runtime, -0.3, -5.5, 0, 10);
 
         if(colorDistance.isStone()) {
-            driveTrain.gyroDrive(this, runtime, -0.1, -8, 0, 10);
+            driveTrain.gyroDrive(this, runtime, -0.3, -8, 0, 10);
             offset = 1;
             if(colorDistance.isStone()) {
-                driveTrain.gyroDrive(this, runtime, -0.1, -8, 0, 10);
+                driveTrain.gyroDrive(this, runtime, -0.3, -8, 0, 10);
                 offset = 2;
             }
         }
@@ -81,39 +81,45 @@ public class SkystoneRed extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(500);
-        driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
-        driveTrain.gyroDrive(this, runtime, .6, 69 + (offset*8.8), 0, 10);
-        driveTrain.encoderStafe(this,runtime, .6,8, driveTrain.STRAFE_LEFT, 3);
+        //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
+        driveTrain.gyroDrive(this, runtime, .9, 69 + (offset*8.8), 0, 10);
+        //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_LEFT, 3);
         block.down();
         sleep(750);
         grabber.up();
         sleep(200);
         block.up();
         sleep(200);
-        driveTrain.encoderStafe(this,runtime, .6,4, driveTrain.STRAFE_RIGHT, 5);
-        driveTrain.gyroDrive(this, runtime, -.6,-95 - (offset*8),0,7);
+        //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_RIGHT, 5);
+        if (offset == 2) offset = -2;
+        driveTrain.gyroDrive(this, runtime, -.9,-95 - (offset*8),0,7);
         sleep(200);
 
-        double distance = distanceSensor.getDistance(DistanceUnit.INCH);
+        /*double distance = distanceSensor.getDistance(DistanceUnit.INCH);
         if ((distance > 4.3) && (distance < 10)){
-            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 1.5, true, 0,8 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 1.5, 0,8 );
+
         }
 
+
+         */
         block.down();
         sleep(750);
         grabber.down();
         sleep(500);
         block.up();
         sleep(200);
-        driveTrain.encoderStafe(this,runtime, .2,4, driveTrain.STRAFE_RIGHT, 3);
-        driveTrain.gyroDrive(this, runtime, .6,100 + (offset*8),0,7);
-        driveTrain.encoderStafe(this,runtime, .2,4, driveTrain.STRAFE_LEFT, 3);
+        //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
+        driveTrain.gyroDrive(this, runtime, .9,104 + (offset*8),0,7);
+        //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_LEFT, 3);
         block.down();
         sleep(500);
         grabber.up();
         sleep(500);
         block.up();
         sleep(500);
+        driveTrain.gyroDrive(this, runtime, -0.8, -50, 0, 10);
+        sleep(50000);
 
         // driveTrain.gyroDrive(this, runtime, -1,-45,0,7);
 

@@ -17,37 +17,12 @@ public class GyroSteerCorrection {
     private BNO055IMU imu;
     private LinearOpMode linearOpMode;
 
-    GyroSteerCorrection (BNO055IMU imu, LinearOpMode linearOpMode) {this.imu = imu; this.linearOpMode = linearOpMode;}
-
-    public double getError(double targetAngle) {
-
-        double robotError;
-
-        Orientation currentAngles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        // calculate error in -179 to +180 range  (
-        robotError = targetAngle - AngleUnit.DEGREES.normalize(currentAngles.firstAngle);
-        // robotError = targetAngle - currentAngles.firstAngle;
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        linearOpMode.telemetry.addData("Angle", "%.1f", currentAngles.firstAngle);
-        linearOpMode.telemetry.addData("Error", "%.1f", robotError);
-        linearOpMode.telemetry.update();
-        return robotError;
-
+    GyroSteerCorrection(BNO055IMU imu, LinearOpMode linearOpMode) {
+        this.imu = imu;
+        this.linearOpMode = linearOpMode;
     }
 
-    /**
-     * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @return
-     */
-    public double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -.2, .2);
-    }
-
-    public MotorSpeed correctMottorSpeed(double speed, double angle) {
+    public MotorSpeed correctMotorSpeed(double speed, double angle) {
         double error = getError(angle);
         double steer = getSteer(error, P_DRIVE_COEFF);
 
@@ -66,4 +41,34 @@ public class GyroSteerCorrection {
 
         return new MotorSpeed(leftSpeed, rightSpeed);
     }
+
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        Orientation currentAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - AngleUnit.DEGREES.normalize(currentAngles.firstAngle);
+        // robotError = targetAngle - currentAngles.firstAngle;
+        while (robotError > 180) robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        linearOpMode.telemetry.addData("Angle", "%.1f", currentAngles.firstAngle);
+        linearOpMode.telemetry.addData("Error", "%.1f", robotError);
+        linearOpMode.telemetry.update();
+        return robotError;
+
+    }
+
+    /**
+     * returns desired steering force.  +/- 1 range.  +ve = steer left
+     *
+     * @param error  Error angle in robot relative degrees
+     * @param PCoeff Proportional Gain Coefficient
+     * @return
+     */
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -.2, .2);
+    }
+
 }

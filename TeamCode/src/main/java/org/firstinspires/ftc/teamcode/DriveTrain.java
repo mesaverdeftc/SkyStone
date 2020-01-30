@@ -247,12 +247,10 @@ public class DriveTrain {
                                   DistanceSensor distanceSensor,
                                   double speed,
                                   double inches,
-                                  boolean direction,
                                   double angle,
                                   double timeoutS) {
 
-        //GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
-
+        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -267,22 +265,14 @@ public class DriveTrain {
 
             if (distanceRemaining < inches) break;
 
-            //MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
-            //double leftSpeed = motorSpeed.getLeftSpeed();
-            //double rightSpeed = motorSpeed.getRightSpeed();
+            MotorSpeed motorSpeed = steerCorrection.correctMotorSpeed(speed, angle);
+            double leftSpeed = motorSpeed.getLeftSpeed();
+            double rightSpeed = motorSpeed.getRightSpeed();
 
-            // Larger is more responsive, but also less stable
-            if(direction == STRAFE_LEFT) {
-                leftFrontDrive.setPower(-speed);
-                rightFrontDrive.setPower(speed);
-                leftRearDrive.setPower(speed);
-                rightRearDrive.setPower(-speed);
-            } else {
-                leftFrontDrive.setPower(speed);
-                rightFrontDrive.setPower(-speed);
-                leftRearDrive.setPower(-speed);
-                rightRearDrive.setPower(speed);
-            }
+            leftFrontDrive.setPower(-speed);
+            rightFrontDrive.setPower(rightSpeed);
+            leftRearDrive.setPower(speed);
+            rightRearDrive.setPower(-leftSpeed);
         }
 
         // Stop all motion;
@@ -303,16 +293,26 @@ public class DriveTrain {
         int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
         boolean direction;
         double newSpeed;
-        int count = 0;
-        int count1 = 0;
+        int acceleration = 0;
+        int deacceleration = 0;
+        double distanceThreshold;
 
         if (inches > 0) {
             direction = DRIVE_FORWARD;
-            newSpeed = speed;
+            newSpeed = Math.abs(speed);
         } else {
             direction = DRIVE_REVERSE;
             newSpeed = -Math.abs(speed);  // Set the speed negative if driving in reverse
         }
+
+        if (Math.abs(newSpeed) > 0.95) distanceThreshold = 32;
+        else if (Math.abs(newSpeed) > 0.85) distanceThreshold = 29;
+        else if (Math.abs(newSpeed) > 0.75) distanceThreshold = 27;
+        else if (Math.abs(newSpeed) > 0.65) distanceThreshold = 22;
+        else if (Math.abs(newSpeed) > 0.55) distanceThreshold = 20;
+        else if (Math.abs(newSpeed) > 0.45) distanceThreshold = 14;
+        else distanceThreshold = 10;
+
 
         // Ensure that the opmode is still active
         if (linearOpMode.opModeIsActive()) {
@@ -338,29 +338,30 @@ public class DriveTrain {
                 if (distanceRemaining < stopDistance) {
                     break;
                 }
-                if (distanceRemaining < (10 * COUNTS_PER_INCH)) {
-                    if (direction == DRIVE_FORWARD) {
-                        newSpeed = speed - (count1 * .2);
-                        newSpeed = Range.clip(newSpeed, .1, speed);
-                    } else {
-                        newSpeed = speed + (count1 * .2);
-                        newSpeed = Range.clip(newSpeed, speed, -.1);
-                    }
-                    count1++;
-                }
-
-                if(count < 10) {
+                //ramp the speed
+                if(acceleration < 10) {
                     if(inches > 0) {
-                        newSpeed = count * .1;
+                        newSpeed = acceleration * .1;
                         newSpeed = Range.clip(newSpeed, 0, speed);
                     } else {
-                        newSpeed = count * -.1;
+                        newSpeed = acceleration * -.1;
                         newSpeed = Range.clip(newSpeed, speed, 0);
                     }
-                    count++;
+                    acceleration++;
                 }
 
-                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(newSpeed, angle);
+                if (distanceRemaining < (distanceThreshold * COUNTS_PER_INCH)) {
+                    if (direction == DRIVE_FORWARD) {
+                        newSpeed = speed - (deacceleration * 0.05);
+                        newSpeed = Range.clip(newSpeed, 0.15, speed);
+                    } else {
+                        newSpeed = speed + (deacceleration * 0.05);
+                        newSpeed = Range.clip(newSpeed, speed, -0.15);
+                    }
+                    deacceleration++;
+                }
+
+                MotorSpeed motorSpeed = steerCorrection.correctMotorSpeed(newSpeed, angle);
 
                 leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
                 rightFrontDrive.setPower(motorSpeed.getRightSpeed());
@@ -398,7 +399,7 @@ public class DriveTrain {
                     break;
                 }
 
-                MotorSpeed motorSpeed = steerCorrection.correctMottorSpeed(speed, angle);
+                MotorSpeed motorSpeed = steerCorrection.correctMotorSpeed(speed, angle);
 
                 leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
                 rightFrontDrive.setPower(motorSpeed.getRightSpeed());

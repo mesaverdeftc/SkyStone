@@ -58,8 +58,8 @@ public class TylerSkystoneBlue extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .9, 10, true, 90,5 );
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.75, true, 90,10 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .9, 10, 90,5 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.75, 90,10 );
         block.down();
         sleep(750);
         grabber.down();
@@ -78,7 +78,7 @@ public class TylerSkystoneBlue extends LinearOpMode {
         sleep(200);
         double distance = distanceSensor.getDistance(DistanceUnit.INCH);
         if ((distance > 3) && (distance < 12)){
-            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 2.75, true, 90,8 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 2.75, 90,8 );
         } else {
             //driveTrain.gyroStrafe(this, runtime, distanceSensor, .2, 1, false, 90,5 );
         }

@@ -58,10 +58,10 @@ public class SkystoneBlue extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .5, 10, DriveTrain.STRAFE_LEFT, 0,5 );
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 2.8, DriveTrain.STRAFE_LEFT, 0,10 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .5, 10, 0,5 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 2.8, 0,10 );
         if(!colorDistance.isStone()) {
-            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 1.4, DriveTrain.STRAFE_LEFT, 0,10 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .1, 1.4, 0,10 );
         }
         driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor,-.2, 10, 0,5);
         driveTrain.gyroDrive(this, runtime, 0.1, 5.5, 0, 10);

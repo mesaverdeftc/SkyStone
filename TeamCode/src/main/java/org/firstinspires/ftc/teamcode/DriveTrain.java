@@ -182,7 +182,7 @@ public class DriveTrain {
                 linearOpMode.telemetry.update();
             }
         } else {
-            while (!linearOpMode.isStopRequested() && desiredAngle <= angles.firstAngle) {
+            while(!linearOpMode.isStopRequested() && desiredAngle <= angles.firstAngle) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 linearOpMode.telemetry.addData("Gyro", "DesiredAngle: %.1f, Current Angle: %.1f", desiredAngle, AngleUnit.DEGREES.normalize(angles.firstAngle));
                 linearOpMode.telemetry.update();

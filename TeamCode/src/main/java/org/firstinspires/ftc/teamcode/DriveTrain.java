@@ -112,9 +112,9 @@ public class DriveTrain {
         // If our simulated manual transmission is in slowmode we divide the joystick values
         // by 3 to simulate a slower gear ratio on the robot.
         if(slowmode) {
-            left_y = left_y / 3.0;
-            left_x = left_x / 3.0;
-            right_x = right_x / 3.0;
+            left_y = left_y / 2.0;
+            left_x = left_x / 2.0;
+            right_x = right_x / 2.0;
         }
 
 
@@ -134,10 +134,10 @@ public class DriveTrain {
         rightRearPower   = Range.clip(left_y - right_x + left_x, -1.0, 1.0) ;
 
         // Send calculated power to wheels
-        leftFrontDrive.setPower(leftFrontPower/1.25);
-        rightFrontDrive.setPower(rightFrontPower/1.25);
-        leftRearDrive.setPower(leftRearPower/1.25);
-        rightRearDrive.setPower(rightRearPower/1.25);
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftRearDrive.setPower(leftRearPower);
+        rightRearDrive.setPower(rightRearPower);
     }
 
     public void stop() {

@@ -110,8 +110,8 @@ public class SkystoneRed extends LinearOpMode {
         block.up();
         sleep(200);
         //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
-        driveTrain.gyroDrive(this, runtime, .9,104 + (offset*8),0,7);
-        //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_LEFT, 3);
+        driveTrain.gyroDrive(this, runtime, .9,104 + (offset*8),0,10);
+        //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.ST1RAFE_LEFT, 3);
         block.down();
         sleep(500);
         grabber.up();
@@ -129,7 +129,7 @@ public class SkystoneRed extends LinearOpMode {
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(500);
-        driveTrain.gyroDrive(this, runtime, -1, -70, 90, 8);
+        driveTrain.gyroDrive(this, runtime, -0.75, -60, 0, 8);
         driveTrain.rotate(this, 5, -0.4);
         driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
         foundation.up();

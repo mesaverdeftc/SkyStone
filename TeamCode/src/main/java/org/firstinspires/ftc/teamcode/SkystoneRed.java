@@ -59,7 +59,7 @@ public class SkystoneRed extends LinearOpMode {
         waitForStart();
 
         driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .7, 12, 0,20 );
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.75, 0,16 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.6, 0,16 );
         if(!colorDistance.isStone()) {
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 1.4, 0,10 );
         }
@@ -96,11 +96,13 @@ public class SkystoneRed extends LinearOpMode {
         driveTrain.gyroDrive(this, runtime, -1.0, -94 -  (offset*8),0,7);
         sleep(200);
 
+
         double distance = distanceSensor.getDistance(DistanceUnit.INCH);
         if ((distance > 4.3) && (distance < 10)){
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 1.5, 0,8 );
 
         }
+        driveTrain.encoderStafe(this,runtime, .2,.2, driveTrain.STRAFE_RIGHT, 3);
 
 
 
@@ -136,7 +138,7 @@ public class SkystoneRed extends LinearOpMode {
 
 
         driveTrain.rotate(this, 85,.4);
-        driveTrain.encoderStafe(this,runtime, .4,4.15, driveTrain.STRAFE_LEFT, 3);
+        driveTrain.encoderStafe(this,runtime, .4,3, driveTrain.STRAFE_LEFT, 3);
         driveTrain.gyroDrive(this, runtime, 0.4, 11, 90, 8);
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
@@ -151,6 +153,7 @@ public class SkystoneRed extends LinearOpMode {
         //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
         //driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);
         //driveTrain.encoderStrafeOffsetUp(this, runtime,1,40, driveTrain.STRAFE_RIGHT,10);
+
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

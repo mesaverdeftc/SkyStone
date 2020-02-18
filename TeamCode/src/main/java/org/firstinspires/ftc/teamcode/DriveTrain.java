@@ -544,7 +544,7 @@ public class DriveTrain {
             // reset the timeout time and start motion.
             runtime.reset();
 
-            leftFrontDrive.setPower((scale * speed)+.32);
+            leftFrontDrive.setPower((scale * speed)+ .32);
             rightFrontDrive.setPower(scale * (-speed));
             leftRearDrive.setPower(scale * (-speed));
             rightRearDrive.setPower(scale * speed);

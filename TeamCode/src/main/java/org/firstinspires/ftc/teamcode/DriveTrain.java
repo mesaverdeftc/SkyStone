@@ -168,11 +168,18 @@ public class DriveTrain {
         rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //slowed down speed to be more accurate in angle turns
-        leftFrontDrive.setPower(-speed);
-        rightFrontDrive.setPower(speed);
-        leftRearDrive.setPower(-speed);
-        rightRearDrive.setPower(speed);
+        if(speed > 0 ) {
+            leftFrontDrive.setPower(-speed);
+            rightFrontDrive.setPower(speed);
+            leftRearDrive.setPower(-speed);
+            rightRearDrive.setPower(speed);
 
+        } else if(speed < 0);{
+            leftFrontDrive.setPower(-speed);
+            rightFrontDrive.setPower(speed);
+            leftRearDrive.setPower(-speed);
+            rightRearDrive.setPower(speed);
+        }
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         if(speed > 0) {
@@ -278,6 +285,104 @@ public class DriveTrain {
         // Stop all motion;
         stop();
     }
+
+    public void gyroDrive_constant(LinearOpMode linearOpMode,
+                          ElapsedTime runtime,
+                          double speed,
+                          double inches,
+                          double angle,
+                          double timeoutS) {
+
+
+        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu, linearOpMode);
+        int newTargetPosition;
+        int distanceRemaining;
+        int stopDistance = (int)(0.1 * COUNTS_PER_INCH);
+        boolean direction;
+        double newSpeed;
+        int acceleration = 0;
+        int deacceleration = 0;
+        double distanceThreshold;
+
+        if (inches > 0) {
+            direction = DRIVE_FORWARD;
+            newSpeed = Math.abs(speed);
+        } else {
+            direction = DRIVE_REVERSE;
+            newSpeed = -Math.abs(speed);  // Set the speed negative if driving in reverse
+        }
+
+        if (Math.abs(newSpeed) > 0.95) distanceThreshold = 32;
+        else if (Math.abs(newSpeed) > 0.85) distanceThreshold = 29;
+        else if (Math.abs(newSpeed) > 0.75) distanceThreshold = 27;
+        else if (Math.abs(newSpeed) > 0.65) distanceThreshold = 22;
+        else if (Math.abs(newSpeed) > 0.55) distanceThreshold = 20;
+        else if (Math.abs(newSpeed) > 0.45) distanceThreshold = 14;
+        else distanceThreshold = 10;
+
+
+        // Ensure that the opmode is still active
+        if (linearOpMode.opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newTargetPosition = leftFrontDrive.getCurrentPosition() + (int)(inches * COUNTS_PER_INCH);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            while (linearOpMode.opModeIsActive() && (runtime.seconds() < timeoutS)) {
+                if (speed > 0) {
+                    distanceRemaining = Range.clip(newTargetPosition - leftFrontDrive.getCurrentPosition(), 0, Integer.MAX_VALUE);
+                } else {
+                    distanceRemaining = Range.clip(leftFrontDrive.getCurrentPosition()- newTargetPosition, 0, Integer.MAX_VALUE);
+                }
+
+                if (distanceRemaining < stopDistance) {
+                    break;
+                }
+                //ramp the speed
+                if(acceleration < 10) {
+                    if(inches > 0) {
+                        newSpeed = acceleration * .1;
+                        newSpeed = Range.clip(newSpeed, 0, speed);
+                    } else {
+                        newSpeed = acceleration * -.1;
+                        newSpeed = Range.clip(newSpeed, speed, 0);
+                    }
+                    acceleration++;
+                }
+/*
+                if (distanceRemaining < (distanceThreshold * COUNTS_PER_INCH)) {
+                    if (direction == DRIVE_FORWARD) {
+                        newSpeed = speed - (deacceleration * 0.05);
+                        newSpeed = Range.clip(newSpeed, 0.15, speed);
+                    } else {
+                        newSpeed = speed + (deacceleration * 0.05);
+                        newSpeed = Range.clip(newSpeed, speed, -0.15);
+                    }
+                    deacceleration++;
+                }
+
+ */
+
+                MotorSpeed motorSpeed = steerCorrection.correctMotorSpeed(newSpeed, angle);
+
+                leftFrontDrive.setPower(motorSpeed.getLeftSpeed());
+                rightFrontDrive.setPower(motorSpeed.getRightSpeed());
+                leftRearDrive.setPower(motorSpeed.getLeftSpeed());
+                rightRearDrive.setPower(motorSpeed.getRightSpeed());
+            }
+
+            stop();
+        }
+    }
+
+
 
     public void gyroDrive(LinearOpMode linearOpMode,
                           ElapsedTime runtime,

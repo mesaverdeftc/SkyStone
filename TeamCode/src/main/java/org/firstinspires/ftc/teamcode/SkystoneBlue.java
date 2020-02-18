@@ -118,23 +118,33 @@ public class SkystoneBlue extends LinearOpMode {
         sleep(500);
         block.up();
         sleep(500);
-        //driveTrain.gyroDrive(this, runtime, -0.8, -50, 0, 10)
 
-        // driveTrain.gyroDrive(this, runtime, -1,-45,0,7);
+        /*driveTrain.gyroDrive(this, runtime, .9, 104 - (offset*8), 0, 10);
+        block.down();
+        sleep(500);
+        grabber.up();
+        sleep(500);
+        block.up();
+        sleep(500);
+        driveTrain.gyroDrive(this, runtime, -.9, -96 - (offset*8), 0, 10);
 
+         */
 
-        // driveTrain.encoderStafe(this,runtime, .4,6, driveTrain.STRAFE_RIGHT, 3);
         driveTrain.rotate(this, 85,.4);
         driveTrain.encoderStafe(this,runtime, .4,4.15, driveTrain.STRAFE_RIGHT, 3);
         driveTrain.gyroDrive(this, runtime, 0.4, 11, 90, 8);
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(750);
-        driveTrain.gyroDrive(this, runtime, -1, -65,90, 10);
-        //driveTrain.rotate(this, 0, -1);
-        //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
+        driveTrain.gyroDrive_constant(this, runtime, -0.3, -35,90, 10);
+        driveTrain.rotate(this, 175, 0.5);
         foundation.up();
-        driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);
+        //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);
+        driveTrain.encoderStafe(this, runtime, 1, 18, driveTrain.STRAFE_LEFT, 10);
+        driveTrain.gyroDrive(this, runtime, -0.75, -32, 175, 20);
+        //driveTrain.rotate(this, 5, 1);
+        //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
+        //driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);
         //driveTrain.encoderStrafeOffsetUp(this, runtime,1,40, driveTrain.STRAFE_RIGHT,10);
 
         telemetry.addData("Path", "Complete");

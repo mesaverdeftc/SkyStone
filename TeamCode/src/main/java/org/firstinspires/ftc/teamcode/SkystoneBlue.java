@@ -128,7 +128,7 @@ public class SkystoneBlue extends LinearOpMode {
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.85, 60,35, 10);
+        driveTrain.gyroDrive(this, runtime, -0.85, 60,35, 10);
         driveTrain.rotate(this, 175, 0.6);
         foundation.up();
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);

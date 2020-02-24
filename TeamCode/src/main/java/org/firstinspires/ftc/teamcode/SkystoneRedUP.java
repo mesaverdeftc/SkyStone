@@ -93,7 +93,7 @@ public class SkystoneRedUP extends LinearOpMode {
         sleep(200);
         //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_RIGHT, 5);
         if (offset == 2) offset = -2;
-        driveTrain.gyroDrive_above(this, runtime, -1.0, -94 -  (offset*8),0,7);
+        driveTrain.gyroDrive(this, runtime, -1.0, -88.5 -  (offset*8),0,7);
         sleep(200);
 
 
@@ -116,7 +116,7 @@ public class SkystoneRedUP extends LinearOpMode {
         driveTrain.gyroDrive(this, runtime, 1.0, 104 + (offset*8),0,7);
         //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_LEFT, 3);
         block.down();
-        sleep(400);
+        sleep(700);
         grabber.up();
         sleep(400);
         block.up();
@@ -162,12 +162,12 @@ public class SkystoneRedUP extends LinearOpMode {
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.75, -40,90, 10);
+        driveTrain.gyroDrive_constant(this, runtime, -0.75, -33,90, 10);
         driveTrain.rotate(this, -2, -.6);
         foundation.up();
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);
-        driveTrain.encoderStafe(this, runtime, 1, 8, driveTrain.STRAFE_LEFT, 10);
-        driveTrain.gyroDrive(this, runtime, -1, -37.5, 0, 20);
+        driveTrain.encoderStafe(this, runtime, 1, 10, driveTrain.STRAFE_LEFT, 10);
+        driveTrain.gyroDrive(this, runtime, -1, -40, 0, 10);
         //driveTrain.rotate(this, 5, 1);
         //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
         //driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);

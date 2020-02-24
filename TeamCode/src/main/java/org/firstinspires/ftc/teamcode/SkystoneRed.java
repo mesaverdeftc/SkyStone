@@ -58,12 +58,12 @@ public class SkystoneRed extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .7, 12, 0,20 );
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.6, 0,16 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 1, 12, 0,20 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .3, 2.6, 0,16 );
         if(!colorDistance.isStone()) {
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 1.4, 0,10 );
         }
-        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor, .3, 10, 0,5);
+        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor, .35, 10, 0,5);
         driveTrain.gyroDrive(this, runtime, -0.3, -5.5, 0, 10);
 
         if(colorDistance.isStone()) {
@@ -128,7 +128,7 @@ public class SkystoneRed extends LinearOpMode {
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.85, -30,40, 10);
+        driveTrain.gyroDrive(this, runtime, -0.85, -30,40, 10);
         driveTrain.rotate(this, -2, -.6);
         foundation.up();
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);

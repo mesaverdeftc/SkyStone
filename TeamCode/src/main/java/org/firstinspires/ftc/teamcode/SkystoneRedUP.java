@@ -93,7 +93,7 @@ public class SkystoneRedUP extends LinearOpMode {
         sleep(200);
         //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_RIGHT, 5);
         if (offset == 2) offset = -2;
-        driveTrain.gyroDrive_above(this, runtime, -1.0, -94 -  (offset*8),0,7);
+        driveTrain.gyroDrive_above(this, runtime, -1.0, -91 -  (offset*8),0,7);
         sleep(200);
 
 

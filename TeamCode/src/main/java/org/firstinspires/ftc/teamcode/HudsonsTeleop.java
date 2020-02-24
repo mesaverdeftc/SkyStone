@@ -136,7 +136,7 @@ public class HudsonsTeleop extends OpMode
                pincherRight.setPower(0.5);
             } else{
                 pincherLeft.setPower(-0.5);
-                pincherRight.setPower(-0.5);
+                pincherRight.setPower(-0.4);
             }
         }
 

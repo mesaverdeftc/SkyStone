@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -60,6 +61,9 @@ public class HudsonsTeleop extends OpMode
     private Attachment grabber = new Attachment();
     private Foundation foundation = new Foundation();
     private Attachment capstone = new Attachment();
+    private DcMotor tapeMeasure = null;
+    private DcMotor pincherLeft = null;
+    private DcMotor pincherRight = null;
 
     private ButtonToggle buttonY = new ButtonToggle();
     private ButtonToggle buttonA = new ButtonToggle();
@@ -67,6 +71,8 @@ public class HudsonsTeleop extends OpMode
     private ButtonToggle button_rb = new ButtonToggle();
     private ButtonToggle button_lb = new ButtonToggle();
     private ButtonToggle button_dpad_down = new ButtonToggle();
+    private ButtonToggle button_rb_gamepad2 = new ButtonToggle();
+
 
     private boolean slowmode = false;
     private boolean fieldCentric = false;
@@ -82,6 +88,17 @@ public class HudsonsTeleop extends OpMode
         foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2",1.0, 0);
         capstone.init(hardwareMap, "capstone_servo3", 0, 1.0);
         grabber.init(hardwareMap, "grabber_servo4", 0, 1.0);
+
+        tapeMeasure = hardwareMap.get(DcMotor.class, "tape_measure_drive");
+        tapeMeasure.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        tapeMeasure.setDirection(DcMotor.Direction.FORWARD);
+
+        pincherLeft = hardwareMap.get(DcMotor.class, "pincher_left_0");
+        pincherRight = hardwareMap.get(DcMotor.class, "pincher_right_1");
+        pincherLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pincherRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        pincherLeft.setDirection(DcMotor.Direction.FORWARD);
+        pincherRight.setDirection(DcMotor.Direction.REVERSE);
 
         driveTrain.init(hardwareMap);
         telemetry.addData("Status", "Initialized");
@@ -106,6 +123,20 @@ public class HudsonsTeleop extends OpMode
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
 
+        double tape_power = -gamepad2.right_stick_y;
+        tapeMeasure.setPower(tape_power);
+
+        if(button_rb_gamepad2.toggled(gamepad2.right_bumper)){
+
+            if(button_rb_gamepad2.toggleState){
+               pincherLeft.setPower(0.5);
+               pincherRight.setPower(0.5);
+            } else{
+                pincherLeft.setPower(-0.5);
+                pincherRight.setPower(-0.5);
+            }
+        }
+
         /*if(buttonY.toggled(gamepad2.y)) {
             block.toggle(buttonY.toggleState);
         }*/
@@ -129,13 +160,13 @@ public class HudsonsTeleop extends OpMode
         }
 
         if(button_lb.toggled(gamepad1.left_bumper)) {
+
             fieldCentric = !fieldCentric;
         }
 
         if(button_rb.toggled(gamepad1.right_bumper)) {
             slowmode = !slowmode;
         }
-
 
         driveTrain.drive(left_x,left_y, right_x, fieldCentric, slowmode);
 

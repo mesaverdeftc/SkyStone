@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-@Autonomous(name="SkystoneBlueUP", group="Linear Opmode")
+@Autonomous(name="SkystoneBlueNoFoundation", group="Linear Opmode")
 //@Disabled
-public class SkystoneBlueUP extends LinearOpMode {
+public class SkystoneBlueNoFoundation extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -61,9 +61,9 @@ public class SkystoneBlueUP extends LinearOpMode {
         driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .7, 12, 0,20 );
         driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.6, 0,16 );
         if(!colorDistance.isStone()) {
-            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, -.2, -1.4, 0,10 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 1.4, 0,10 );
         }
-        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor, -.3, -10, 0,5);
+        driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor, -0.3, 10, 0,5);
         driveTrain.gyroDrive(this, runtime, 0.3, 5.5, 0, 10);
 
         if(colorDistance.isStone()) {
@@ -83,7 +83,7 @@ public class SkystoneBlueUP extends LinearOpMode {
         block.up();
         sleep(500);
         //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
-        driveTrain.gyroDrive(this, runtime, -1.0, -65 + (offset*8.8), 0, 10);
+        driveTrain.gyroDrive(this, runtime, -1.0, -42, 0, 10);
         //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_LEFT, 3);
         block.down();
         sleep(700);
@@ -93,7 +93,7 @@ public class SkystoneBlueUP extends LinearOpMode {
         sleep(200);
         //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_RIGHT, 5);
         if (offset == 2) offset = -2;
-        driveTrain.gyroDrive(this, runtime, 1.0, 91 +  (offset*8),0,7);
+        driveTrain.gyroDrive(this, runtime, 1.0, 42 + (offset*8),0,7);
         sleep(200);
 
 
@@ -102,7 +102,7 @@ public class SkystoneBlueUP extends LinearOpMode {
             driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, 0.2, 1.5, 0,8 );
 
         }
-        driveTrain.encoderStafe(this,runtime, .2,.2, driveTrain.STRAFE_LEFT, 3);
+        driveTrain.encoderStafe(this,runtime, .2,.2, driveTrain.STRAFE_RIGHT, 3);
 
 
 
@@ -113,7 +113,7 @@ public class SkystoneBlueUP extends LinearOpMode {
         block.up();
         sleep(200);
         //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
-        driveTrain.gyroDrive(this, runtime, -1.0, -104 - (offset*8),0,7);
+        driveTrain.gyroDrive(this, runtime, -1.0, -42,0,7);
         //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_LEFT, 3);
         block.down();
         sleep(400);
@@ -121,57 +121,10 @@ public class SkystoneBlueUP extends LinearOpMode {
         sleep(400);
         block.up();
         sleep(400);
-/*
-        if (offset == 0) {
-            driveTrain.gyroDrive_above(this, runtime, -1, -85, 0, 10);
-            block.down();
-            sleep(500);
-            grabber.down();
-            sleep(500);
-            block.up();
-            driveTrain.gyroDrive_above(this, runtime, 1, 92, 0, 10);
-            block.down();
-            sleep(400);
-            grabber.up();
-            sleep(400);
-            block.up();
-            sleep(400);
+
+        if (offset == 0){
+
         }
-        else if (offset == 1 || offset == -2){
-            driveTrain.gyroDrive_above(this, runtime, -1, -77, 0, 10);
-            block.down();
-            sleep(500);
-            grabber.down();
-            sleep(500);
-            block.up();
-            driveTrain.gyroDrive_above(this, runtime, 1, 84, 0, 10);
-            block.down();
-            sleep(400);
-            grabber.up();
-            sleep(400);
-            block.up();
-            sleep(400);
-        }
-
- */
-
-
-        driveTrain.rotate(this, 85,.4);
-        driveTrain.encoderStafe(this,runtime, .4,2, driveTrain.STRAFE_LEFT, 3);
-        driveTrain.gyroDrive(this, runtime, 0.5, 8, 90, 8);
-        //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
-        foundation.down();
-        sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.85, -30,35, 10);
-        driveTrain.rotate(this, -2, -.6);
-        foundation.up();
-        //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);
-        driveTrain.encoderStafe(this, runtime, 1, 22, driveTrain.STRAFE_RIGHT, 10);
-        driveTrain.gyroDrive(this, runtime, -1, -32, 0, 20);
-        //driveTrain.rotate(this, 5, 1);
-        //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
-        //driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);
-        //driveTrain.encoderStrafeOffsetUp(this, runtime,1,40, driveTrain.STRAFE_RIGHT,10);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

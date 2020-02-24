@@ -290,6 +290,42 @@ public class DriveTrain {
         stop();
     }
 
+    public void gyroStrafeAwayBlock(
+                                  ElapsedTime runtime,
+                                  DistanceSensor distanceSensor,
+                                  double speed,
+                                  double inchesAway,
+                                  double timeoutS) {
+
+//        GyroSteerCorrection steerCorrection = new GyroSteerCorrection(imu);
+//        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightRearDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+
+        while ((runtime.seconds() < timeoutS)) {
+
+            double distanceRemaining = distanceSensor.getDistance(DistanceUnit.INCH);
+
+            if (distanceRemaining > inchesAway) break;
+
+//            MotorSpeed motorSpeed = steerCorrection.correctMotorSpeed(speed, angle);
+//            double leftSpeed = motorSpeed.getLeftSpeed();
+//            double rightSpeed = motorSpeed.getRightSpeed();
+
+            leftFrontDrive.setPower(speed);
+            rightFrontDrive.setPower(-speed);
+            leftRearDrive.setPower(-speed);
+            rightRearDrive.setPower(speed);
+        }
+
+        // Stop all motion;
+        stop();
+    }
+
     public void gyroDrive_constant(LinearOpMode linearOpMode,
                           ElapsedTime runtime,
                           double speed,

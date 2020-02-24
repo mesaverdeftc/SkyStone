@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -73,6 +74,7 @@ public class HudsonsTeleop extends OpMode
     private ButtonToggle button_dpad_down = new ButtonToggle();
     private ButtonToggle button_rb_gamepad2 = new ButtonToggle();
 
+    private DistanceSensor distanceSensor = null;
 
     private boolean slowmode = false;
     private boolean fieldCentric = false;
@@ -88,6 +90,7 @@ public class HudsonsTeleop extends OpMode
         foundation.init(hardwareMap, "foundation_servo1", "foundation_servo2",1.0, 0);
         capstone.init(hardwareMap, "capstone_servo3", 0, 1.0);
         grabber.init(hardwareMap, "grabber_servo4", 0, 1.0);
+        distanceSensor = hardwareMap.get(com.qualcomm.robotcore.hardware.DistanceSensor.class, "distance_1");
 
         tapeMeasure = hardwareMap.get(DcMotor.class, "tape_measure_drive");
         tapeMeasure.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -135,6 +138,13 @@ public class HudsonsTeleop extends OpMode
                 pincherLeft.setPower(-0.5);
                 pincherRight.setPower(-0.5);
             }
+        }
+
+        if(buttonA.toggled(gamepad1.a)) {
+            driveTrain.gyroStrafeAwayBlock(runtime, distanceSensor, .4, 1.5, 5);
+            block.setPosition(-1.0);
+            grabber.setPosition(1.0);
+            block.setPosition(1.0);
         }
 
         /*if(buttonY.toggled(gamepad2.y)) {

@@ -83,7 +83,7 @@ public class SkystoneBlueUP extends LinearOpMode {
         block.up();
         sleep(500);
         //driveTrain.encoderStafe(this,runtime, .5,4, driveTrain.STRAFE_RIGHT, 3);
-        driveTrain.gyroDrive(this, runtime, -1.0, -65 + (offset*8.8), 0, 10);
+        driveTrain.gyroDrive(this, runtime, -1.0, -65 - (offset*8.8), 0, 10);
         //driveTrain.encoderStafe(this,runtime, .5,8, driveTrain.STRAFE_LEFT, 3);
         block.down();
         sleep(700);
@@ -121,50 +121,20 @@ public class SkystoneBlueUP extends LinearOpMode {
         sleep(400);
         block.up();
         sleep(400);
-/*
-        if (offset == 0) {
-            driveTrain.gyroDrive_above(this, runtime, -1, -85, 0, 10);
-            block.down();
-            sleep(500);
-            grabber.down();
-            sleep(500);
-            block.up();
-            driveTrain.gyroDrive_above(this, runtime, 1, 92, 0, 10);
-            block.down();
-            sleep(400);
-            grabber.up();
-            sleep(400);
-            block.up();
-            sleep(400);
-        }
-        else if (offset == 1 || offset == -2){
-            driveTrain.gyroDrive_above(this, runtime, -1, -77, 0, 10);
-            block.down();
-            sleep(500);
-            grabber.down();
-            sleep(500);
-            block.up();
-            driveTrain.gyroDrive_above(this, runtime, 1, 84, 0, 10);
-            block.down();
-            sleep(400);
-            grabber.up();
-            sleep(400);
-            block.up();
-            sleep(400);
-        }
-
- */
-
 
         driveTrain.rotate(this, 85,.4);
+
         driveTrain.encoderStafe(this,runtime, .4,4.5, driveTrain.STRAFE_RIGHT, 3);
+
         driveTrain.gyroDrive(this, runtime, 0.5, 8, 90, 8);
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
+
         driveTrain.gyroDrive_constant(this, runtime, -0.85, -33,90, 10);
         driveTrain.rotate(this, 179, .6);
         driveTrain.gyroDrive(this, runtime, 0.5, 4, 180, 8);
+
         foundation.up();
         sleep(400);
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);

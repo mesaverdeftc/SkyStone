@@ -65,10 +65,10 @@ public class SkystoneRed3Blocks extends LinearOpMode {
         driveTrain.gyroDrive(this, runtime, -0.3, -5.5, 0, 10);
 
         if(colorDistance.isStone()) {
-            driveTrain.gyroDrive(this, runtime, -0.3, -8, 0, 10);
+            driveTrain.gyroDrive(this, runtime, -0.5, -8, 0, 10);
             offset = 1;
             if(colorDistance.isStone()) {
-                driveTrain.gyroDrive(this, runtime, -0.3, -8, 0, 10);
+                driveTrain.gyroDrive(this, runtime, -0.5, -8, 0, 10);
                 offset = 2;
 
             }
@@ -152,7 +152,7 @@ public class SkystoneRed3Blocks extends LinearOpMode {
 
 
         driveTrain.rotate(this, 85,.4);
-        driveTrain.encoderStafe(this,runtime, .4,9, driveTrain.STRAFE_LEFT, 3);
+        driveTrain.encoderStafe(this,runtime, .5,9, driveTrain.STRAFE_LEFT, 3);
         driveTrain.gyroDrive(this, runtime, 0.5, 8, 90, 8);
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();

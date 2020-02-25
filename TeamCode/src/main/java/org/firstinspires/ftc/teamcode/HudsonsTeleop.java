@@ -139,6 +139,10 @@ public class HudsonsTeleop extends OpMode
                 pincherRight.setPower(-0.5);
             }
         }
+        if(button_lb.toggled(gamepad2.left_bumper)){
+            pincherLeft.setPower(0);
+            pincherRight.setPower(0);
+        }
 
         if(buttonA.toggled(gamepad1.a)) {
             driveTrain.gyroStrafeAwayBlock(runtime, distanceSensor, .4, 1.5, 5);

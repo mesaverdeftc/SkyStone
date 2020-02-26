@@ -57,9 +57,9 @@ public class SkystoneBlue3Blocks extends LinearOpMode {
         waitForStart();
 
         driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .7, 12, 0,20 );
-        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 2.6, 0,16 );
+        driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .25, 2.6, 0,16 );
         if(!colorDistance.isStone()) {
-            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .2, 1.4, 0,10 );
+            driveTrain.gyroStrafeToBlock(this, runtime, distanceSensor, .25, 1.4, 0,10 );
         }
         driveTrain.gyroDriveBlockEdge(this, runtime, distanceSensor, -0.3, 10, 0,5);
         driveTrain.gyroDrive(this, runtime, 0.3, 5.5, 0, 10);
@@ -121,13 +121,13 @@ public class SkystoneBlue3Blocks extends LinearOpMode {
         sleep(400);
 
         if (offset == 0) {
-            driveTrain.gyroDrive_above(this, runtime, -1, -85, 0, 10);
+            driveTrain.gyroDrive_above(this, runtime, 1, 88, 0, 10);
             block.down();
             sleep(500);
             grabber.down();
             sleep(500);
             block.up();
-            driveTrain.gyroDrive_above(this, runtime, 1, 92, 0, 10);
+            driveTrain.gyroDrive_above(this, runtime, -1, -92, 0, 10);
             block.down();
             sleep(400);
             grabber.up();
@@ -136,13 +136,13 @@ public class SkystoneBlue3Blocks extends LinearOpMode {
             sleep(400);
         }
         else if (offset == 1 || offset == -2){
-            driveTrain.gyroDrive_above(this, runtime, -1, -77, 0, 10);
+            driveTrain.gyroDrive_above(this, runtime, 1, 82, 0, 10);
             block.down();
             sleep(500);
             grabber.down();
             sleep(500);
             block.up();
-            driveTrain.gyroDrive_above(this, runtime, 1, 84, 0, 10);
+            driveTrain.gyroDrive_above(this, runtime, -1, -88, 0, 10);
             block.down();
             sleep(400);
             grabber.up();
@@ -158,12 +158,12 @@ public class SkystoneBlue3Blocks extends LinearOpMode {
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.85, 60,35, 10);
+        driveTrain.gyroDrive(this, runtime, -0.85, -52.5,120, 10);
         driveTrain.rotate(this, 175, 0.6);
         foundation.up();
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);
-        driveTrain.encoderStafe(this, runtime, 1, 22, driveTrain.STRAFE_RIGHT, 10);
-        driveTrain.gyroDrive(this, runtime, -1, -32, 0, 20);
+        driveTrain.encoderStafe(this, runtime, 1, 30, driveTrain.STRAFE_LEFT, 10);
+        driveTrain.gyroDrive(this, runtime, -1, -38, 180, 20);
         //driveTrain.rotate(this, 5, 1);
         //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
         //driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);

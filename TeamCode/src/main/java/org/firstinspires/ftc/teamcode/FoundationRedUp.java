@@ -102,15 +102,16 @@ public class FoundationRedUp extends LinearOpMode {
         driveTrain.gyroDrive(this, runtime, .4, 22, 0,5);
         driveTrain.encoderStafe(this, runtime,.4, 11, DriveTrain.STRAFE_RIGHT, 5); //left
         driveTrain.gyroDrive(this, runtime, .25, 7, 0,5);
+        sleep(500);
         foundation.down();
         sleep(500);
         driveTrain.gyroDrive(this, runtime, -.4, -29, 0,5);
         driveTrain.rotate(this, -85, -.4);
-        driveTrain.gyroDrive(this, runtime, .4, 13, -90,5);
+        driveTrain.gyroDrive(this, runtime, .4, 8, -90,5);
         foundation.up();
         sleep(500);
-        driveTrain.encoderStafe(this, runtime, .4, 20, DriveTrain.STRAFE_LEFT, 5);
-        driveTrain.gyroDrive(this, runtime, -.4, -37, -90,5);
+        driveTrain.encoderStafe(this, runtime, .4, 12, DriveTrain.STRAFE_LEFT, 5);
+        driveTrain.gyroDrive(this, runtime, -.4, -40, -90,5);
         sleep(1000);
 
         telemetry.addData("Path", "Complete");

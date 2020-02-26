@@ -61,9 +61,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="FoundationBlueLeft", group="Linear Opmode")
+@Autonomous(name="FoundationBlueDown", group="Linear Opmode")
 //@Disabled
-public class FoundationBlueLeft extends LinearOpMode {
+public class FoundationBlueDown extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -99,39 +99,24 @@ public class FoundationBlueLeft extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.gyroDrive(this, runtime, 0.4, 22, 0,5);
+        driveTrain.gyroDrive(this, runtime, 0.4, 22, 0, 5);
         driveTrain.encoderStafe(this, runtime, 0.4, 11, DriveTrain.STRAFE_LEFT, 9); //left
-        driveTrain.gyroDrive(this, runtime, 0.25, 9, 0,5);
+        driveTrain.gyroDrive(this, runtime, 0.25, 9, 0, 5);
+        sleep(500);
         foundation.down();
         sleep(500);
-        driveTrain.gyroDrive(this, runtime, -0.4, -29, 0,5);
+        driveTrain.gyroDrive(this, runtime, -0.4, -29, 0, 5);
         driveTrain.rotate(this, 85, 0.4);
-        driveTrain.gyroDrive(this, runtime, 0.4, 13, 90,5);
+        driveTrain.gyroDrive(this, runtime, 0.4, 13, 90, 5);
         foundation.up();
         sleep(500);
-        driveTrain.encoderStafe(this, runtime, .4, 22, DriveTrain.STRAFE_LEFT, 5);
-        driveTrain.gyroDrive(this, runtime, -0.4, -37, 90,5);
+        driveTrain.encoderStafe(this, runtime, .4, 18, DriveTrain.STRAFE_LEFT, 5);
+        driveTrain.gyroDrive(this, runtime, -0.4, -40, 90, 5);
 
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 
-}
-/*
-    encoderDrive(1.0,  25,  25, 5);
-    encoderStafe(0.5, 11,false,5);
-    encoderDrive(0.25,  7,  7, 5);
-        servoFoundation1.setPosition(-1.0);
-        servoFoundation2.setPosition(1.0);
-    sleep(2000);
-    encoderDrive2(-0.75, -29,-29,5);
-    rotate(-90, 0.5);
-    encoderDrive(0.75,  13,  13, 5);
-        servoFoundation1.setPosition(1.0);
-        servoFoundation2.setPosition(-1.0);
-    sleep(1000);
-    encoderStafe(.5, 14,false,5);
-    encoderDrive2(-0.75, -37,-37,7);
 
-*/
+}

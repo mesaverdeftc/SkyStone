@@ -152,17 +152,17 @@ public class SkystoneBlueUP3Blocks extends LinearOpMode {
         }
 
         driveTrain.rotate(this, 85,.4);
-        driveTrain.encoderStafe(this,runtime, .4,4, driveTrain.STRAFE_RIGHT, 3);
+        driveTrain.encoderStafe(this,runtime, .4,8, driveTrain.STRAFE_RIGHT, 3);
         driveTrain.gyroDrive(this, runtime, 0.5, 8, 90, 8);
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.85, 60,35, 10);
+        driveTrain.gyroDrive(this, runtime, -0.85, -52.5,120, 10);
         driveTrain.rotate(this, 175, 0.6);
         foundation.up();
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);
-        driveTrain.encoderStafe(this, runtime, 1, 22, driveTrain.STRAFE_RIGHT, 10);
-        driveTrain.gyroDrive(this, runtime, -1, -32, 0, 20);
+        driveTrain.encoderStafe(this, runtime, 1, 13, driveTrain.STRAFE_RIGHT, 10);
+        driveTrain.gyroDrive(this, runtime, -1, -38, 180, 20);
         //driveTrain.rotate(this, 5, 1);
         //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);
         //driveTrain.encoderStafe(this,runtime,1,55,driveTrain.STRAFE_RIGHT,10);

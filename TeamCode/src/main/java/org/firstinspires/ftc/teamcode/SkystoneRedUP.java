@@ -130,11 +130,11 @@ public class SkystoneRedUP extends LinearOpMode {
         //driveTrain.encoderStafe(this, runtime, 0.4, 8, driveTrain.STRAFE_LEFT, 10);
         foundation.down();
         sleep(700);
-        driveTrain.gyroDrive_constant(this, runtime, -0.75, -35,60, 10);
+        driveTrain.gyroDrive_constant(this, runtime, -0.6, -35,60, 10);
         driveTrain.rotate(this, -2, -.4);
         foundation.up();
         //driveTrain.gyroDrive(this, runtime, 0.75, 10, 0, 10);
-        driveTrain.encoderStafe(this, runtime, 1, 10, driveTrain.STRAFE_LEFT, 10);
+        driveTrain.encoderStafe(this, runtime, 1, 18, driveTrain.STRAFE_LEFT, 10);
         driveTrain.gyroDrive(this, runtime, -1, -40, 0, 10);
         //driveTrain.rotate(this, 5, 1);
         //driveTrain.gyroDrive(this, runtime, 1, 15, 0, 8);

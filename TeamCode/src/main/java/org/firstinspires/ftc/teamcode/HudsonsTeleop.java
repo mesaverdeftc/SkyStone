@@ -63,6 +63,7 @@ public class HudsonsTeleop extends OpMode
     private Foundation foundation = new Foundation();
     private Attachment capstone = new Attachment();
     private DcMotor tapeMeasure = null;
+    private DcMotor tapeCapstone = null;
     private DcMotor pincherLeft = null;
     private DcMotor pincherRight = null;
 
@@ -72,7 +73,9 @@ public class HudsonsTeleop extends OpMode
     private ButtonToggle button_rb = new ButtonToggle();
     private ButtonToggle button_lb = new ButtonToggle();
     private ButtonToggle button_dpad_down = new ButtonToggle();
-    private ButtonToggle button_rb_gamepad2 = new ButtonToggle();
+
+    private ButtonToggle button_lb_pinchers = new ButtonToggle();
+    private ButtonToggle button_rb_pinchers = new ButtonToggle();
 
     private DistanceSensor distanceSensor = null;
 
@@ -95,6 +98,10 @@ public class HudsonsTeleop extends OpMode
         tapeMeasure = hardwareMap.get(DcMotor.class, "tape_measure_drive");
         tapeMeasure.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         tapeMeasure.setDirection(DcMotor.Direction.FORWARD);
+
+        tapeCapstone = hardwareMap.get(DcMotor.class, "tape_capstone_drive");
+        tapeCapstone.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        tapeCapstone.setDirection(DcMotor.Direction.REVERSE);
 
         pincherLeft = hardwareMap.get(DcMotor.class, "pincher_left_0");
         pincherRight = hardwareMap.get(DcMotor.class, "pincher_right_1");
@@ -126,12 +133,15 @@ public class HudsonsTeleop extends OpMode
         double left_y = -gamepad1.left_stick_y;
         double right_x = gamepad1.right_stick_x;
 
-        double tape_power = -gamepad2.right_stick_y;
-        tapeMeasure.setPower(tape_power);
+        double tape_measure_power = -gamepad2.right_stick_y;
+        tapeMeasure.setPower(tape_measure_power);
 
-        if(button_rb_gamepad2.toggled(gamepad2.right_bumper)){
+        double tape_capstone_power = gamepad1.right_trigger/2 - gamepad1.left_trigger/2;
+        tapeCapstone.setPower(tape_capstone_power);
 
-            if(button_rb_gamepad2.toggleState){
+        if(button_rb_pinchers.toggled(gamepad2.right_bumper)){
+
+            if(button_rb_pinchers.toggleState){
                pincherLeft.setPower(0.5);
                pincherRight.setPower(0.5);
             } else{
@@ -139,7 +149,7 @@ public class HudsonsTeleop extends OpMode
                 pincherRight.setPower(-0.5);
             }
         }
-        if(button_lb.toggled(gamepad2.left_bumper)){
+        if(button_lb_pinchers.toggled(gamepad2.left_bumper)){
             pincherLeft.setPower(0);
             pincherRight.setPower(0);
         }
@@ -174,7 +184,6 @@ public class HudsonsTeleop extends OpMode
         }
 
         if(button_lb.toggled(gamepad1.left_bumper)) {
-
             fieldCentric = !fieldCentric;
         }
 
@@ -185,6 +194,12 @@ public class HudsonsTeleop extends OpMode
         driveTrain.drive(left_x,left_y, right_x, fieldCentric, slowmode);
 
         // Show the elapsed game time and wheel power.
+
+        if (fieldCentric)
+            telemetry.addData("Field Centric", "true");
+        else
+            telemetry.addData("Field Centric", "false");
+
         telemetry.addData("Values", "leftX = %.2f, leftY = %.2f", left_x, left_y);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "leftFront (%.2f), rightFront (%.2f), leftRear (%.2f), rightRear (%.2f)",

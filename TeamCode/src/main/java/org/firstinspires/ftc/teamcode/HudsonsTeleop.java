@@ -81,6 +81,8 @@ public class HudsonsTeleop extends OpMode
 
     private boolean slowmode = false;
     private boolean fieldCentric = false;
+    private boolean useCapstoneTape = true;
+
 
     @Override
     public void init() {
@@ -136,9 +138,17 @@ public class HudsonsTeleop extends OpMode
         double tape_measure_power = -gamepad2.right_stick_y;
         tapeMeasure.setPower(tape_measure_power);
 
-        double tape_capstone_power = gamepad1.right_trigger/2 - gamepad1.left_trigger/2;
-        tapeCapstone.setPower(tape_capstone_power);
-
+        if(buttonY.toggled(gamepad1.y)) {
+            useCapstoneTape = !useCapstoneTape;
+        }
+        if (useCapstoneTape){
+            double tape_capstone_power = gamepad1.right_trigger/2 - gamepad1.left_trigger/3;
+            tapeCapstone.setPower(tape_capstone_power);
+        }
+        else{
+            capstone.setPosition(1.0 - gamepad1.right_trigger);
+            tapeCapstone.setPower(0.0);
+        }
         if(button_rb_pinchers.toggled(gamepad2.right_bumper)){
 
             if(button_rb_pinchers.toggleState){
@@ -161,9 +171,6 @@ public class HudsonsTeleop extends OpMode
             block.setPosition(1.0);
         }
 
-        /*if(buttonY.toggled(gamepad2.y)) {
-            block.toggle(buttonY.toggleState);
-        }*/
 
         block.setPosition(gamepad2.left_stick_y);
 
@@ -175,9 +182,11 @@ public class HudsonsTeleop extends OpMode
             foundation.toggle(buttonB.toggleState);
         }
 
-        if(button_dpad_down.toggled(gamepad2.dpad_down)) {
+        /*if(button_dpad_down.toggled(gamepad2.dpad_down)) {
             capstone.toggle(button_dpad_down.toggleState);
         }
+
+         */
 
         if(gamepad1.dpad_up) {
             driveTrain.resetAngle();
